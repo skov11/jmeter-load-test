@@ -191,16 +191,12 @@
           <hashTree/>
         </hashTree>
 
-        <!-- Category/Products Page (80% probability simulation via Throughput Controller) -->
+        <!-- Category/Products Page (80% probability) -->
         <ThroughputController guiclass="ThroughputControllerGui" testclass="ThroughputController" testname="Category Browsing (80% of users)" enabled="true">
           <intProp name="ThroughputController.style">1</intProp>
           <boolProp name="ThroughputController.perThread">false</boolProp>
           <intProp name="ThroughputController.maxThroughput">1</intProp>
-          <FloatProperty>
-            <name>ThroughputController.percentThroughput</name>
-            <value>80.0</value>
-            <savedAsString>false</savedAsString>
-          </FloatProperty>
+          <stringProp name="ThroughputController.percentThroughput">80.0</stringProp>
         </ThroughputController>
         <hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="02 - Category/Products" enabled="true">
@@ -292,11 +288,7 @@
           <intProp name="ThroughputController.style">1</intProp>
           <boolProp name="ThroughputController.perThread">false</boolProp>
           <intProp name="ThroughputController.maxThroughput">1</intProp>
-          <FloatProperty>
-            <name>ThroughputController.percentThroughput</name>
-            <value>60.0</value>
-            <savedAsString>false</savedAsString>
-          </FloatProperty>
+          <stringProp name="ThroughputController.percentThroughput">60.0</stringProp>
         </ThroughputController>
         <hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="03 - Search" enabled="true">
@@ -348,11 +340,7 @@
           <intProp name="ThroughputController.style">1</intProp>
           <boolProp name="ThroughputController.perThread">false</boolProp>
           <intProp name="ThroughputController.maxThroughput">1</intProp>
-          <FloatProperty>
-            <name>ThroughputController.percentThroughput</name>
-            <value>40.0</value>
-            <savedAsString>false</savedAsString>
-          </FloatProperty>
+          <stringProp name="ThroughputController.percentThroughput">40.0</stringProp>
         </ThroughputController>
         <hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="04 - Product Detail" enabled="true">
@@ -380,11 +368,7 @@
               <intProp name="ThroughputController.style">1</intProp>
               <boolProp name="ThroughputController.perThread">false</boolProp>
               <intProp name="ThroughputController.maxThroughput">1</intProp>
-              <FloatProperty>
-                <name>ThroughputController.percentThroughput</name>
-                <value>20.0</value>
-                <savedAsString>false</savedAsString>
-              </FloatProperty>
+              <stringProp name="ThroughputController.percentThroughput">20.0</stringProp>
             </ThroughputController>
             <hashTree>
               <!-- Add to Cart (POST request) -->
@@ -490,11 +474,7 @@
           <intProp name="ThroughputController.style">1</intProp>
           <boolProp name="ThroughputController.perThread">false</boolProp>
           <intProp name="ThroughputController.maxThroughput">1</intProp>
-          <FloatProperty>
-            <name>ThroughputController.percentThroughput</name>
-            <value>30.0</value>
-            <savedAsString>false</savedAsString>
-          </FloatProperty>
+          <stringProp name="ThroughputController.percentThroughput">30.0</stringProp>
         </ThroughputController>
         <hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="05 - About Page" enabled="true">
@@ -531,154 +511,6 @@
             </GaussianRandomTimer>
             <hashTree/>
           </hashTree>
-        </hashTree></boolProp>
-          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
-          <stringProp name="HTTPSampler.connect_timeout">15000</stringProp>
-          <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
-          <stringProp name="HTTPSampler.ipSource">${SOURCE_IP}</stringProp>
-        </HTTPSamplerProxy>
-        <hashTree>
-          <!-- Referer Header -->
-          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Referer Header" enabled="true">
-            <collectionProp name="HeaderManager.headers">
-              <elementProp name="" elementType="Header">
-                <stringProp name="Header.name">Referer</stringProp>
-                <stringProp name="Header.value">${WEBSITE_PROTOCOL}://${WEBSITE_HOST}/</stringProp>
-              </elementProp>
-            </collectionProp>
-          </HeaderManager>
-          <hashTree/>
-          
-          <!-- Navigation delay -->
-          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Navigation Delay" enabled="true">
-            <stringProp name="ConstantTimer.delay">8000</stringProp>
-            <stringProp name="RandomTimer.range">15000</stringProp>
-          </UniformRandomTimer>
-          <hashTree/>
-          
-          <!-- Browsing time -->
-          <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Browsing Time" enabled="true">
-            <stringProp name="ConstantTimer.delay">25000</stringProp>
-            <stringProp name="RandomTimer.range">30000</stringProp>
-          </GaussianRandomTimer>
-          <hashTree/>
-        </hashTree>
-
-        <!-- Search Functionality -->
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="03 - Search" enabled="true">
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-            <collectionProp name="Arguments.arguments">
-              <elementProp name="q" elementType="HTTPArgument">
-                <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">${SEARCH_TERM}</stringProp>
-                <stringProp name="Argument.metadata">=</stringProp>
-                <boolProp name="HTTPArgument.use_equals">true</boolProp>
-                <stringProp name="Argument.name">q</stringProp>
-              </elementProp>
-            </collectionProp>
-          </elementProp>
-          <stringProp name="HTTPSampler.domain"></stringProp>
-          <stringProp name="HTTPSampler.port"></stringProp>
-          <stringProp name="HTTPSampler.protocol"></stringProp>
-          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">/search</stringProp>
-          <stringProp name="HTTPSampler.method">GET</stringProp>
-          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
-          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
-          <stringProp name="HTTPSampler.connect_timeout">15000</stringProp>
-          <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
-          <stringProp name="HTTPSampler.ipSource">${SOURCE_IP}</stringProp>
-        </HTTPSamplerProxy>
-        <hashTree>
-          <!-- Search typing delay -->
-          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Search Typing Time" enabled="true">
-            <stringProp name="ConstantTimer.delay">12000</stringProp>
-            <stringProp name="RandomTimer.range">18000</stringProp>
-          </UniformRandomTimer>
-          <hashTree/>
-          
-          <!-- Results review time -->
-          <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Results Review Time" enabled="true">
-            <stringProp name="ConstantTimer.delay">20000</stringProp>
-            <stringProp name="RandomTimer.range">25000</stringProp>
-          </GaussianRandomTimer>
-          <hashTree/>
-        </hashTree>
-
-        <!-- Product Detail Page -->
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="04 - Product Detail" enabled="true">
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-            <collectionProp name="Arguments.arguments"/>
-          </elementProp>
-          <stringProp name="HTTPSampler.domain"></stringProp>
-          <stringProp name="HTTPSampler.port"></stringProp>
-          <stringProp name="HTTPSampler.protocol"></stringProp>
-          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">/product/123</stringProp>
-          <stringProp name="HTTPSampler.method">GET</stringProp>
-          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
-          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
-          <stringProp name="HTTPSampler.connect_timeout">15000</stringProp>
-          <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
-          <stringProp name="HTTPSampler.ipSource">${SOURCE_IP}</stringProp>
-        </HTTPSamplerProxy>
-        <hashTree>
-          <!-- Page load delay -->
-          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Page Load Delay" enabled="true">
-            <stringProp name="ConstantTimer.delay">6000</stringProp>
-            <stringProp name="RandomTimer.range">12000</stringProp>
-          </UniformRandomTimer>
-          <hashTree/>
-          
-          <!-- Detailed reading time -->
-          <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Detailed Reading Time" enabled="true">
-            <stringProp name="ConstantTimer.delay">45000</stringProp>
-            <stringProp name="RandomTimer.range">60000</stringProp>
-          </GaussianRandomTimer>
-          <hashTree/>
-        </hashTree>
-
-        <!-- About Page -->
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="05 - About Page" enabled="true">
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-            <collectionProp name="Arguments.arguments"/>
-          </elementProp>
-          <stringProp name="HTTPSampler.domain"></stringProp>
-          <stringProp name="HTTPSampler.port"></stringProp>
-          <stringProp name="HTTPSampler.protocol"></stringProp>
-          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">/about</stringProp>
-          <stringProp name="HTTPSampler.method">GET</stringProp>
-          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
-          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
-          <stringProp name="HTTPSampler.connect_timeout">15000</stringProp>
-          <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
-          <stringProp name="HTTPSampler.ipSource">${SOURCE_IP}</stringProp>
-        </HTTPSamplerProxy>
-        <hashTree>
-          <!-- Quick scan time -->
-          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Quick Scan Time" enabled="true">
-            <stringProp name="ConstantTimer.delay">8000</stringProp>
-            <stringProp name="RandomTimer.range">15000</stringProp>
-          </UniformRandomTimer>
-          <hashTree/>
-          
-          <!-- Session end time -->
-          <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Session End Time" enabled="true">
-            <stringProp name="ConstantTimer.delay">10000</stringProp>
-            <stringProp name="RandomTimer.range">20000</stringProp>
-          </GaussianRandomTimer>
-          <hashTree/>
         </hashTree>
         
         <!-- Break between sessions -->
@@ -698,4 +530,4 @@
       </hashTree>
     </hashTree>
   </hashTree>
-</jmeterTestPlan>
+</jmeterTestPlan></boolP
