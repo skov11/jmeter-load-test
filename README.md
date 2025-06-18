@@ -1,4 +1,3 @@
-# jmeter-load-test
 # JMeter Traffic Generator Setup Guide for Windows
 
 ## Prerequisites
@@ -38,15 +37,22 @@
    - Copy the content from the source IPs artifact  
    - Save it as `C:\firewall-test\source_ips.csv`
 
+4. **Save the Websites CSV:**
+   - Copy the content from the websites artifact
+   - Save it as `C:\firewall-test\websites.csv`
+
 Your folder structure should look like:
 ```
 C:\firewall-test\
 ├── browsing_test.jmx
 ├── user_agents.csv
-└── source_ips.csv
+├── source_ips.csv
+└── websites.csv
 ```
 
-### Step 3: Configure Your Target
+### Step 3: Configure Your Target (Optional - Now Uses Real Websites)
+**The test now automatically visits real websites from the CSV file, but you can still override this:**
+
 1. Open `browsing_test.jmx` in a text editor (Notepad++ recommended)
 2. Find these lines near the top:
    ```xml
@@ -54,10 +60,12 @@ C:\firewall-test\
    <stringProp name="Argument.value">80</stringProp>
    <stringProp name="Argument.value">http</stringProp>
    ```
-3. Replace with your firewall's details:
+3. Replace with your firewall's details if you want to test a specific target:
    - **TARGET_HOST**: Your firewall IP or hostname (e.g., `192.168.1.1`)
    - **TARGET_PORT**: `80` for HTTP or `443` for HTTPS
    - **PROTOCOL**: `http` or `https`
+
+**Note:** The test now uses the `websites.csv` file by default, so it will visit real websites like Google, YouTube, Amazon, etc.
 
 ### Step 4: Start JMeter GUI
 1. Open Command Prompt as Administrator
@@ -80,6 +88,8 @@ C:\firewall-test\
 2. Check that the **Filename** field shows: `user_agents.csv`
 3. Click on **"Source IP Data"**
 4. Check that the **Filename** field shows: `source_ips.csv`
+5. Click on **"Website Data"**
+6. Check that the **Filename** field shows: `websites.csv`
 
 *Note: JMeter looks for CSV files relative to the .jmx file location*
 
