@@ -141,16 +141,23 @@
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
-          <intProp name="LoopController.loops">10</intProp>
+          <intProp name="LoopController.loops">3</intProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">50</stringProp>
-        <stringProp name="ThreadGroup.ramp_time">60</stringProp>
+        <stringProp name="ThreadGroup.num_threads">25</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">300</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
         <stringProp name="ThreadGroup.delay"></stringProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
       </ThreadGroup>
       <hashTree>
+        
+        <!-- Random startup delay for each user -->
+        <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="User Startup Delay" enabled="true">
+          <stringProp name="ConstantTimer.delay">5000</stringProp>
+          <stringProp name="RandomTimer.range">30000</stringProp>
+        </UniformRandomTimer>
+        <hashTree/>
         
         <!-- Homepage Request -->
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="01 - Homepage" enabled="true">
@@ -173,10 +180,17 @@
           <stringProp name="HTTPSampler.ipSource">${SOURCE_IP}</stringProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <!-- Think Time after Homepage -->
-          <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Think Time" enabled="true">
-            <stringProp name="ConstantTimer.delay">3000</stringProp>
-            <stringProp name="RandomTimer.range">2000</stringProp>
+          <!-- Initial page load time (realistic) -->
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Page Load Time" enabled="true">
+            <stringProp name="ConstantTimer.delay">5000</stringProp>
+            <stringProp name="RandomTimer.range">10000</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+          
+          <!-- Reading/thinking time after homepage -->
+          <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Reading Time" enabled="true">
+            <stringProp name="ConstantTimer.delay">15000</stringProp>
+            <stringProp name="RandomTimer.range">20000</stringProp>
           </GaussianRandomTimer>
           <hashTree/>
         </hashTree>
@@ -213,10 +227,17 @@
           </HeaderManager>
           <hashTree/>
           
-          <!-- Think Time -->
-          <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Think Time" enabled="true">
-            <stringProp name="ConstantTimer.delay">5000</stringProp>
-            <stringProp name="RandomTimer.range">3000</stringProp>
+          <!-- Random navigation delay -->
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Navigation Delay" enabled="true">
+            <stringProp name="ConstantTimer.delay">8000</stringProp>
+            <stringProp name="RandomTimer.range">15000</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+          
+          <!-- Browsing/scanning time -->
+          <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Browsing Time" enabled="true">
+            <stringProp name="ConstantTimer.delay">25000</stringProp>
+            <stringProp name="RandomTimer.range">30000</stringProp>
           </GaussianRandomTimer>
           <hashTree/>
         </hashTree>
@@ -250,10 +271,17 @@
           <stringProp name="HTTPSampler.ipSource">${SOURCE_IP}</stringProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <!-- Think Time -->
-          <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Think Time" enabled="true">
-            <stringProp name="ConstantTimer.delay">4000</stringProp>
-            <stringProp name="RandomTimer.range">2500</stringProp>
+          <!-- Search typing simulation delay -->
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Search Typing Time" enabled="true">
+            <stringProp name="ConstantTimer.delay">12000</stringProp>
+            <stringProp name="RandomTimer.range">18000</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+          
+          <!-- Results review time -->
+          <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Results Review Time" enabled="true">
+            <stringProp name="ConstantTimer.delay">20000</stringProp>
+            <stringProp name="RandomTimer.range">25000</stringProp>
           </GaussianRandomTimer>
           <hashTree/>
         </hashTree>
@@ -279,10 +307,17 @@
           <stringProp name="HTTPSampler.ipSource">${SOURCE_IP}</stringProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <!-- Think Time -->
-          <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Think Time" enabled="true">
-            <stringProp name="ConstantTimer.delay">8000</stringProp>
-            <stringProp name="RandomTimer.range">5000</stringProp>
+          <!-- Page load and initial scan -->
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Page Load Delay" enabled="true">
+            <stringProp name="ConstantTimer.delay">6000</stringProp>
+            <stringProp name="RandomTimer.range">12000</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+          
+          <!-- Detailed reading/consideration time -->
+          <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Detailed Reading Time" enabled="true">
+            <stringProp name="ConstantTimer.delay">45000</stringProp>
+            <stringProp name="RandomTimer.range">60000</stringProp>
           </GaussianRandomTimer>
           <hashTree/>
         </hashTree>
@@ -308,13 +343,27 @@
           <stringProp name="HTTPSampler.ipSource">${SOURCE_IP}</stringProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <!-- Final Think Time -->
-          <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Think Time" enabled="true">
-            <stringProp name="ConstantTimer.delay">3000</stringProp>
-            <stringProp name="RandomTimer.range">2000</stringProp>
+          <!-- Quick scan of about page -->
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Quick Scan Time" enabled="true">
+            <stringProp name="ConstantTimer.delay">8000</stringProp>
+            <stringProp name="RandomTimer.range">15000</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+          
+          <!-- Session end thinking time -->
+          <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Session End Time" enabled="true">
+            <stringProp name="ConstantTimer.delay">10000</stringProp>
+            <stringProp name="RandomTimer.range">20000</stringProp>
           </GaussianRandomTimer>
           <hashTree/>
         </hashTree>
+        
+        <!-- Random break between browsing sessions -->
+        <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Break Between Sessions" enabled="true">
+          <stringProp name="ConstantTimer.delay">120000</stringProp>
+          <stringProp name="RandomTimer.range">300000</stringProp>
+        </UniformRandomTimer>
+        <hashTree/>
 
         <!-- Results Tree (for debugging) -->
         <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="false">
