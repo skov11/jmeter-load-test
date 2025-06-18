@@ -11,11 +11,12 @@ This JMeter test plan creates **realistic web browsing traffic** from multiple s
 - **50 concurrent users** browsing simultaneously
 - **60 unique source IP addresses** (192.168.1.10 through 192.168.1.70)
 - **2000+ diverse websites** across multiple categories (social media, e-commerce, news, tech, education, cloud services, etc.)
-- **20 different browser profiles** with realistic headers (User-Agent, screen resolution, DNT settings, etc.)
+- **20+ different browser profiles** with realistic headers (User-Agent, screen resolution, DNT settings, etc.)
 - **HTTPS and HTTP traffic** with proper SSL/TLS encryption
-- **Variable search terms** (200+ realistic search queries)
+- **200+ variable search terms** (realistic search queries from everyday items to technical products)
 - **Realistic URL paths** and page variations
 - **Geographic language diversity** (multiple Accept-Language patterns)
+- **Session probability logic** with ThroughputController for realistic user behavior
 
 ### **🕒 Realistic Browsing Behavior**
 
@@ -73,31 +74,36 @@ This test plan helps evaluate:
 
 ### **📈 Expected Traffic Volume**
 
-- **~250-750 total HTTP requests** (varies by user probability paths)
+- **~300-750 total HTTP requests** (varies by user probability paths)
 - **~1-4 requests per minute** per user (very conservative, human-like)
 - **Peak concurrent connections:** 50-100 (depending on page load times)
 - **Data transfer:** Varies by target sites (typically 10-100MB total)
-- **Request types:** 85% GET, 15% POST (shopping cart, forms, AJAX)
-- **Early dropouts:** ~15% of users abandon sessions early (realistic behavior)
+- **Request types:** Mix of GET and POST (Category browsing, Search, AJAX, Shopping cart)
+- **Session probabilities:** 80% category, 60% search, 40% product details, 30% info pages, 20% shopping cart actions
 
 ### **🔍 What You'll See in Firewall Logs**
 
 - **Diverse source IPs:** Traffic from 192.168.1.10-70
-- **Realistic domains:** DNS queries for major websites
+- **Realistic domains:** DNS queries for 2000+ major websites
 - **Mixed protocols:** HTTP (port 80) and HTTPS (port 443)
-- **Authentic headers:** Proper User-Agent, Accept, Referer headers
-- **Natural timing:** Human-like delays between requests
+- **Authentic headers:** Proper User-Agent, Accept, Referer headers with DNT and Accept-Encoding
+- **Natural timing:** Human-like delays between requests (15-117 seconds)
 - **Session behavior:** Cookie exchanges and persistent connections
+- **Varied request types:** GET requests for browsing, POST requests for shopping cart actions
+- **AJAX traffic:** XMLHttpRequest calls for dynamic content loading
+- **Realistic search patterns:** 200+ different search terms across sessions
 
 ### **⚠️ Safety Features**
 
 - **Conservative request rates** to avoid detection/blocking
 - **Human-like timing** reduces bot detection risk
+- **Session probability logic** creates realistic user behavior patterns
 - **Configurable targets** (can use test sites instead of real websites)
 - **Easy cleanup** of temporary IP aliases after testing
 - **Gradual load increase** prevents sudden traffic spikes
+- **ThroughputController-based logic** ensures compatibility across JMeter versions
 
-This test plan provides **authentic, sustainable web traffic** perfect for comprehensive firewall and network security testing without triggering security alerts or violating website terms of service.
+This test plan provides **ultra-realistic, authentic web traffic** with advanced probability-based user behavior simulation, perfect for comprehensive firewall and network security testing. The combination of diverse websites, realistic timing patterns, and sophisticated user journey logic creates traffic that's virtually indistinguishable from real internet users while remaining safe and undetectable by security systems.
 
 ## Prerequisites
 
@@ -116,7 +122,7 @@ This test plan provides **authentic, sustainable web traffic** perfect for compr
 #### 2. Download JMeter
 
 1. Go to [Apache JMeter Downloads](https://jmeter.apache.org/download_jmeter.cgi)
-2. Download the **Binary** zip file (not source) - usually named `apache-jmeter-X.X.zip`
+2. Download the **Binary** zip file (not source) - usually named `apache-jmeter-5.6.3.zip`
 3. Extract the zip file to a folder like `C:\jmeter\`
 
 #### 3. Configure Source IP Addresses (Required for Multiple Client Simulation)
@@ -191,12 +197,12 @@ If these commands work, the IP binding is successful.
 1. **Download JMeter:**
    ```bash
    cd /opt
-   sudo wget https://downloads.apache.org//jmeter/binaries/apache-jmeter-5.6.2.tgz
+   sudo wget https://downloads.apache.org//jmeter/binaries/apache-jmeter-5.6.3.tgz
    ```
 2. **Extract JMeter:**
    ```bash
-   sudo tar -xzf apache-jmeter-5.6.2.tgz
-   sudo mv apache-jmeter-5.6.2 jmeter
+   sudo tar -xzf apache-jmeter-5.6.3.tgz
+   sudo mv apache-jmeter-5.6.3 jmeter
    sudo chown -R $USER:$USER /opt/jmeter
    ```
 3. **Add to PATH (optional):**
@@ -418,7 +424,7 @@ _Note: JMeter looks for CSV files relative to the .jmx file location_
 1. **View Results** (if using command line):
 
    ```cmd
-   C:\jmeter\apache-jmeter-X.X\bin\jmeter.bat -g results.jtl -o report
+   C:\jmeter\apache-jmeter-5.6.3\bin\jmeter.bat -g results.jtl -o report
    ```
 
    This creates an HTML report in the `report` folder
@@ -456,10 +462,12 @@ _Note: JMeter looks for CSV files relative to the .jmx file location_
 
 **No traffic showing in firewall logs:**
 
-- Verify IP aliases are properly configured (`ipconfig /all`)
+- Verify IP aliases are properly configured (`ipconfig /all` or `ip addr show`)
 - Check that your default gateway points to the firewall
-- Test binding with: `ping -S 192.168.1.10 8.8.8.8`
+- Test binding with: `ping -S 192.168.1.10 8.8.8.8` (Windows) or `ping -I 192.168.1.10 -c 2 8.8.8.8` (Ubuntu)
 - Monitor firewall interfaces during the test
+- Ensure all required CSV files are present and properly formatted
+- Check that websites.csv contains valid domains (2000+ entries)
 
 **High CPU usage:**
 
