@@ -1,1 +1,177 @@
 # jmeter-load-test
+# JMeter Traffic Generator Setup Guide for Windows
+
+## Prerequisites
+
+### 1. Install Java (Required)
+1. Download **Java 8 or higher** from [Oracle](https://www.oracle.com/java/technologies/downloads/) or [OpenJDK](https://adoptium.net/)
+2. Run the installer and follow the setup wizard
+3. Verify installation by opening Command Prompt and typing:
+   ```cmd
+   java -version
+   ```
+   You should see Java version information
+
+### 2. Download JMeter
+1. Go to [Apache JMeter Downloads](https://jmeter.apache.org/download_jmeter.cgi)
+2. Download the **Binary** zip file (not source) - usually named `apache-jmeter-X.X.zip`
+3. Extract the zip file to a folder like `C:\jmeter\`
+
+## Setup Steps
+
+### Step 1: Create Project Directory
+1. Create a new folder for your test project:
+   ```
+   C:\firewall-test\
+   ```
+
+### Step 2: Save the Test Files
+1. **Save the JMeter Test Plan:**
+   - Copy the XML content from the first artifact
+   - Save it as `C:\firewall-test\browsing_test.jmx`
+
+2. **Save the User Agents CSV:**
+   - Copy the content from the user agents artifact
+   - Save it as `C:\firewall-test\user_agents.csv`
+
+3. **Save the Source IPs CSV:**
+   - Copy the content from the source IPs artifact  
+   - Save it as `C:\firewall-test\source_ips.csv`
+
+Your folder structure should look like:
+```
+C:\firewall-test\
+├── browsing_test.jmx
+├── user_agents.csv
+└── source_ips.csv
+```
+
+### Step 3: Configure Your Target
+1. Open `browsing_test.jmx` in a text editor (Notepad++ recommended)
+2. Find these lines near the top:
+   ```xml
+   <stringProp name="Argument.value">www.example.com</stringProp>
+   <stringProp name="Argument.value">80</stringProp>
+   <stringProp name="Argument.value">http</stringProp>
+   ```
+3. Replace with your firewall's details:
+   - **TARGET_HOST**: Your firewall IP or hostname (e.g., `192.168.1.1`)
+   - **TARGET_PORT**: `80` for HTTP or `443` for HTTPS
+   - **PROTOCOL**: `http` or `https`
+
+### Step 4: Start JMeter GUI
+1. Open Command Prompt as Administrator
+2. Navigate to JMeter bin directory:
+   ```cmd
+   cd C:\jmeter\apache-jmeter-X.X\bin
+   ```
+3. Start JMeter GUI:
+   ```cmd
+   jmeter.bat
+   ```
+
+### Step 5: Load the Test Plan
+1. In JMeter GUI, click **File → Open**
+2. Navigate to `C:\firewall-test\browsing_test.jmx`
+3. Click **Open**
+
+### Step 6: Verify CSV Files Are Found
+1. In the Test Plan tree, click on **"User Agent Data"**
+2. Check that the **Filename** field shows: `user_agents.csv`
+3. Click on **"Source IP Data"**
+4. Check that the **Filename** field shows: `source_ips.csv`
+
+*Note: JMeter looks for CSV files relative to the .jmx file location*
+
+### Step 7: Configure Test Parameters (Optional)
+1. Click on **"Browsing Users"** thread group
+2. Adjust settings if needed:
+   - **Number of Threads**: 50 (number of simulated users)
+   - **Ramp-up Period**: 60 seconds (time to start all users)
+   - **Loop Count**: 10 (how many times each user repeats the browsing flow)
+
+### Step 8: Run the Test
+#### Option A: GUI Mode (for testing/debugging)
+1. Click the green **Start** button (triangle icon)
+2. Watch the test progress in real-time
+3. View results in **"Summary Report"**
+
+#### Option B: Command Line Mode (for actual load testing)
+1. Close JMeter GUI
+2. Open Command Prompt in your test folder:
+   ```cmd
+   cd C:\firewall-test
+   ```
+3. Run the test:
+   ```cmd
+   C:\jmeter\apache-jmeter-X.X\bin\jmeter.bat -n -t browsing_test.jmx -l results.jtl
+   ```
+
+## Monitoring Your Test
+
+### During the Test
+- **GUI Mode**: Watch the Summary Report for real-time statistics
+- **Command Line**: Monitor the console output for progress
+- **Firewall**: Check your firewall logs for incoming connections
+
+### After the Test
+1. **View Results** (if using command line):
+   ```cmd
+   C:\jmeter\apache-jmeter-X.X\bin\jmeter.bat -g results.jtl -o report
+   ```
+   This creates an HTML report in the `report` folder
+
+2. **Key Metrics to Check:**
+   - Response times
+   - Error rates
+   - Throughput (requests/second)
+   - Firewall performance and logs
+
+## Troubleshooting
+
+### Common Issues
+
+**"CSV file not found" error:**
+- Ensure CSV files are in the same folder as the .jmx file
+- Check file names match exactly (case-sensitive)
+
+**Java not found:**
+- Verify Java is installed and in your PATH
+- Try running: `java -version` in Command Prompt
+
+**Permission errors:**
+- Run Command Prompt as Administrator
+- Check Windows firewall isn't blocking JMeter
+
+**High CPU usage:**
+- Reduce number of threads for initial testing
+- Use command line mode instead of GUI for actual load testing
+
+### Network Configuration
+If you need to configure network interfaces for the source IPs:
+1. Open Command Prompt as Administrator
+2. Add IP aliases (example):
+   ```cmd
+   netsh interface ip add address "Local Area Connection" 192.168.1.10 255.255.255.0
+   netsh interface ip add address "Local Area Connection" 192.168.1.11 255.255.255.0
+   ```
+
+## Performance Tips
+
+1. **Use Command Line** for serious load testing (GUI adds overhead)
+2. **Increase Java heap** for high load:
+   ```cmd
+   set HEAP="-Xms1g -Xmx4g"
+   jmeter.bat -n -t browsing_test.jmx -l results.jtl
+   ```
+3. **Monitor system resources** during testing
+4. **Start small** - test with 10 users first, then scale up
+
+## Safety Reminders
+
+- Only test against your own firewall or with explicit permission
+- Use isolated test networks when possible
+- Monitor system resources to avoid overloading your test machine
+- Have a plan to stop the test quickly if needed
+
+Your traffic generator is now ready to simulate realistic browsing behavior from 50+ different client IPs!
