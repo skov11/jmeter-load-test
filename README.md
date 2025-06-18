@@ -1,8 +1,10 @@
-# JMeter Traffic Generator Setup Guide for Windows
+# JMeter Traffic Generator Setup Guide for Windows & Ubuntu
 
 ## Prerequisites
 
-### 1. Install Java (Required)
+### Windows Prerequisites
+
+#### 1. Install Java (Required)
 1. Download **Java 8 or higher** from [Oracle](https://www.oracle.com/java/technologies/downloads/) or [OpenJDK](https://adoptium.net/)
 2. Run the installer and follow the setup wizard
 3. Verify installation by opening Command Prompt and typing:
@@ -11,22 +13,22 @@
    ```
    You should see Java version information
 
-### 2. Download JMeter
+#### 2. Download JMeter
 1. Go to [Apache JMeter Downloads](https://jmeter.apache.org/download_jmeter.cgi)
 2. Download the **Binary** zip file (not source) - usually named `apache-jmeter-X.X.zip`
 3. Extract the zip file to a folder like `C:\jmeter\`
 
-### 3. Configure Source IP Addresses (Required for Multiple Client Simulation)
+#### 3. Configure Source IP Addresses (Required for Multiple Client Simulation)
 **IMPORTANT:** To simulate traffic from multiple client IPs, you must first add IP aliases to your network interface.
 
-#### Find Your Network Interface Name:
+##### Find Your Network Interface Name:
 1. Open Command Prompt and run:
    ```cmd
    ipconfig
    ```
 2. Note the name of your active network connection (e.g., "Ethernet", "Wi-Fi", "Local Area Connection")
 
-#### Add IP Aliases Using PowerShell (Recommended):
+##### Add IP Aliases Using PowerShell (Recommended):
 1. **Save the PowerShell script** as `add_source_ips.ps1` in your project folder
 2. **Open PowerShell as Administrator** (Right-click PowerShell → "Run as Administrator")
 3. **Navigate to your project folder:**
@@ -43,7 +45,7 @@
    ```
    You should see IP addresses 192.168.1.10 through 192.168.1.70 listed
 
-#### Alternative: Add IP Aliases Using Batch File:
+##### Alternative: Add IP Aliases Using Batch File:
 1. **Edit the batch file** `add_source_ips.bat` and replace `Ethernet` with your actual interface name
 2. **Run Command Prompt as Administrator**
 3. **Execute the batch file:**
@@ -51,13 +53,77 @@
    add_source_ips.bat
    ```
 
-#### Test IP Binding:
+##### Test IP Binding:
 Verify JMeter can use the new IPs:
 ```cmd
 ping -S 192.168.1.10 8.8.8.8
 ping -S 192.168.1.20 8.8.8.8
 ```
 If these commands work, the IP binding is successful.
+
+### Ubuntu Prerequisites
+
+#### 1. Install Java (Required)
+1. **Update package list:**
+   ```bash
+   sudo apt update
+   ```
+2. **Install OpenJDK:**
+   ```bash
+   sudo apt install openjdk-11-jdk
+   ```
+3. **Verify installation:**
+   ```bash
+   java -version
+   ```
+
+#### 2. Download JMeter
+1. **Download JMeter:**
+   ```bash
+   cd /opt
+   sudo wget https://downloads.apache.org//jmeter/binaries/apache-jmeter-5.6.2.tgz
+   ```
+2. **Extract JMeter:**
+   ```bash
+   sudo tar -xzf apache-jmeter-5.6.2.tgz
+   sudo mv apache-jmeter-5.6.2 jmeter
+   sudo chown -R $USER:$USER /opt/jmeter
+   ```
+3. **Add to PATH (optional):**
+   ```bash
+   echo 'export PATH=$PATH:/opt/jmeter/bin' >> ~/.bashrc
+   source ~/.bashrc
+   ```
+
+#### 3. Configure Source IP Addresses (Required for Multiple Client Simulation)
+
+##### Find Your Network Interface:
+```bash
+ip addr show
+```
+Look for your active interface (usually `eth0`, `ens33`, `enp0s3`, etc.)
+
+##### Add IP Aliases Using Script:
+1. **Create the IP binding script** and save as `add_source_ips.sh`
+2. **Make it executable:**
+   ```bash
+   chmod +x add_source_ips.sh
+   ```
+3. **Run the script:**
+   ```bash
+   sudo ./add_source_ips.sh
+   ```
+4. **Verify IPs were added:**
+   ```bash
+   ip addr show
+   ```
+   You should see IP addresses 192.168.1.10/24 through 192.168.1.70/24 listed
+
+##### Test IP Binding:
+```bash
+ping -I 192.168.1.10 -c 2 8.8.8.8
+ping -I 192.168.1.20 -c 2 8.8.8.8
+```
 
 ## Setup Steps
 
@@ -173,8 +239,8 @@ C:\firewall-test\
 
 ## Post-Test Cleanup
 
-### Remove IP Aliases (IMPORTANT)
-After completing your firewall testing, remove the temporary IP addresses:
+### Windows Cleanup
+**Remove IP Aliases (IMPORTANT)** - After completing your firewall testing, remove the temporary IP addresses:
 
 1. **Open PowerShell as Administrator**
 2. **Navigate to your project folder:**
@@ -190,6 +256,23 @@ After completing your firewall testing, remove the temporary IP addresses:
    ipconfig /all
    ```
    The 192.168.1.10-70 addresses should no longer be listed
+
+### Ubuntu Cleanup
+**Remove IP Aliases (IMPORTANT)** - After completing your firewall testing, remove the temporary IP addresses:
+
+1. **Navigate to your project folder:**
+   ```bash
+   cd ~/firewall-test
+   ```
+2. **Run the removal script:**
+   ```bash
+   sudo ./remove_source_ips.sh
+   ```
+3. **Verify removal:**
+   ```bash
+   ip addr show
+   ```
+   The 192.168.1.10/24-70/24 addresses should no longer be listed
 
 ## Monitoring Your Test
 
@@ -213,7 +296,7 @@ After completing your firewall testing, remove the temporary IP addresses:
 
 ## Troubleshooting
 
-### Common Issues
+### Windows Issues
 
 **"Cannot bind to source IP" or "Address already in use":**
 - Verify IP aliases were added successfully using `ipconfig /all`
@@ -234,6 +317,58 @@ After completing your firewall testing, remove the temporary IP addresses:
 
 **No traffic showing in firewall logs:**
 - Verify IP aliases are properly configured (`ipconfig /all`)
+- Check that your default gateway points to the firewall
+- Test binding with: `ping -S 192.168.1.10 8.8.8.8`
+- Monitor firewall interfaces during the test
+
+**High CPU usage:**
+- Reduce number of threads for initial testing
+- Use command line mode instead of GUI for actual load testing
+
+### Ubuntu Issues
+
+**"Cannot bind to source IP" or "Cannot assign requested address":**
+- Verify IP aliases were added successfully using `ip addr show`
+- Check that the IP range doesn't conflict with existing network devices
+- Ensure you ran the script with sudo: `sudo ./add_source_ips.sh`
+
+**"Permission denied" when running scripts:**
+- Make scripts executable: `chmod +x add_source_ips.sh remove_source_ips.sh`
+- Run IP scripts with sudo: `sudo ./add_source_ips.sh`
+
+**Java not found:**
+- Install OpenJDK: `sudo apt install openjdk-11-jdk`
+- Verify installation: `java -version`
+
+**JMeter command not found:**
+- Use full path: `/opt/jmeter/bin/jmeter`
+- Or add to PATH: `export PATH=$PATH:/opt/jmeter/bin`
+
+**No traffic showing in firewall logs:**
+- Verify IP aliases: `ip addr show`
+- Test binding: `ping -I 192.168.1.10 -c 2 8.8.8.8`
+- Check default route: `ip route show default`
+- Monitor network interface: `sudo tcpdump -i eth0 host 192.168.1.10`
+
+**Display issues (headless systems):**
+- Use command line mode only: `jmeter -n -t browsing_test.jmx -l results.jtl`
+- Install X11 forwarding if GUI needed: `sudo apt install xauth`
+
+### Common Cross-Platform Issues
+
+**DNS Resolution Issues:**
+- Test with: `nslookup www.google.com`
+- Check /etc/resolv.conf (Ubuntu) or DNS settings (Windows)
+
+**Network Connectivity:**
+- Verify internet connection
+- Check firewall rules on test machine
+- Test basic connectivity: `ping 8.8.8.8`
+
+**JMeter Performance:**
+- Increase JVM heap size: `export JVM_ARGS="-Xms1g -Xmx4g"`
+- Use non-GUI mode for production testing
+- Monitor system resources during test Verify IP aliases are properly configured (`ipconfig /all`)
 - Check that your default gateway points to the firewall
 - Test binding with: `ping -S 192.168.1.10 8.8.8.8`
 - Monitor firewall interfaces during the test
