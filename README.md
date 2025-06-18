@@ -16,6 +16,49 @@
 2. Download the **Binary** zip file (not source) - usually named `apache-jmeter-X.X.zip`
 3. Extract the zip file to a folder like `C:\jmeter\`
 
+### 3. Configure Source IP Addresses (Required for Multiple Client Simulation)
+**IMPORTANT:** To simulate traffic from multiple client IPs, you must first add IP aliases to your network interface.
+
+#### Find Your Network Interface Name:
+1. Open Command Prompt and run:
+   ```cmd
+   ipconfig
+   ```
+2. Note the name of your active network connection (e.g., "Ethernet", "Wi-Fi", "Local Area Connection")
+
+#### Add IP Aliases Using PowerShell (Recommended):
+1. **Save the PowerShell script** as `add_source_ips.ps1` in your project folder
+2. **Open PowerShell as Administrator** (Right-click PowerShell → "Run as Administrator")
+3. **Navigate to your project folder:**
+   ```powershell
+   cd C:\firewall-test
+   ```
+4. **Run the IP binding script:**
+   ```powershell
+   .\add_source_ips.ps1
+   ```
+5. **Verify IPs were added:**
+   ```cmd
+   ipconfig /all
+   ```
+   You should see IP addresses 192.168.1.10 through 192.168.1.70 listed
+
+#### Alternative: Add IP Aliases Using Batch File:
+1. **Edit the batch file** `add_source_ips.bat` and replace `Ethernet` with your actual interface name
+2. **Run Command Prompt as Administrator**
+3. **Execute the batch file:**
+   ```cmd
+   add_source_ips.bat
+   ```
+
+#### Test IP Binding:
+Verify JMeter can use the new IPs:
+```cmd
+ping -S 192.168.1.10 8.8.8.8
+ping -S 192.168.1.20 8.8.8.8
+```
+If these commands work, the IP binding is successful.
+
 ## Setup Steps
 
 ### Step 1: Create Project Directory
@@ -41,13 +84,21 @@
    - Copy the content from the websites artifact
    - Save it as `C:\firewall-test\websites.csv`
 
+5. **Save the IP Management Scripts:**
+   - Copy the PowerShell script content and save as `C:\firewall-test\add_source_ips.ps1`
+   - Copy the removal script content and save as `C:\firewall-test\remove_source_ips.ps1`
+   - (Optional) Copy the batch file content and save as `C:\firewall-test\add_source_ips.bat`
+
 Your folder structure should look like:
 ```
 C:\firewall-test\
 ├── browsing_test.jmx
 ├── user_agents.csv
 ├── source_ips.csv
-└── websites.csv
+├── websites.csv
+├── add_source_ips.ps1
+├── remove_source_ips.ps1
+└── add_source_ips.bat (optional)
 ```
 
 ### Step 3: Configure Your Target (Optional - Now Uses Real Websites)
@@ -101,10 +152,13 @@ C:\firewall-test\
    - **Loop Count**: 10 (how many times each user repeats the browsing flow)
 
 ### Step 8: Run the Test
+**IMPORTANT:** Make sure you have added the IP aliases (Step 3) before running the test, otherwise JMeter cannot bind to the source IPs.
+
 #### Option A: GUI Mode (for testing/debugging)
 1. Click the green **Start** button (triangle icon)
 2. Watch the test progress in real-time
 3. View results in **"Summary Report"**
+4. **Check your firewall logs** - you should now see traffic from multiple source IPs (192.168.1.10-70)
 
 #### Option B: Command Line Mode (for actual load testing)
 1. Close JMeter GUI
@@ -116,6 +170,26 @@ C:\firewall-test\
    ```cmd
    C:\jmeter\apache-jmeter-X.X\bin\jmeter.bat -n -t browsing_test.jmx -l results.jtl
    ```
+
+## Post-Test Cleanup
+
+### Remove IP Aliases (IMPORTANT)
+After completing your firewall testing, remove the temporary IP addresses:
+
+1. **Open PowerShell as Administrator**
+2. **Navigate to your project folder:**
+   ```powershell
+   cd C:\firewall-test
+   ```
+3. **Run the removal script:**
+   ```powershell
+   .\remove_source_ips.ps1
+   ```
+4. **Verify removal:**
+   ```cmd
+   ipconfig /all
+   ```
+   The 192.168.1.10-70 addresses should no longer be listed
 
 ## Monitoring Your Test
 
@@ -141,6 +215,11 @@ C:\firewall-test\
 
 ### Common Issues
 
+**"Cannot bind to source IP" or "Address already in use":**
+- Verify IP aliases were added successfully using `ipconfig /all`
+- Check that the IP range doesn't conflict with existing network devices
+- Try using a different IP range in both the CSV file and the scripts
+
 **"CSV file not found" error:**
 - Ensure CSV files are in the same folder as the .jmx file
 - Check file names match exactly (case-sensitive)
@@ -150,8 +229,14 @@ C:\firewall-test\
 - Try running: `java -version` in Command Prompt
 
 **Permission errors:**
-- Run Command Prompt as Administrator
+- Run Command Prompt/PowerShell as Administrator
 - Check Windows firewall isn't blocking JMeter
+
+**No traffic showing in firewall logs:**
+- Verify IP aliases are properly configured (`ipconfig /all`)
+- Check that your default gateway points to the firewall
+- Test binding with: `ping -S 192.168.1.10 8.8.8.8`
+- Monitor firewall interfaces during the test
 
 **High CPU usage:**
 - Reduce number of threads for initial testing
@@ -181,7 +266,9 @@ If you need to configure network interfaces for the source IPs:
 
 - Only test against your own firewall or with explicit permission
 - Use isolated test networks when possible
+- **Always remove IP aliases after testing** to avoid network conflicts
 - Monitor system resources to avoid overloading your test machine
 - Have a plan to stop the test quickly if needed
+- **Remember:** The IP aliases (192.168.1.10-70) are temporary and should be removed when testing is complete
 
 Your traffic generator is now ready to simulate realistic browsing behavior from 50+ different client IPs!
