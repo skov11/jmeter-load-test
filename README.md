@@ -6,27 +6,50 @@
 This JMeter test plan creates **realistic web browsing traffic** from multiple source IPs to test firewall performance, load balancing, and network security systems under authentic conditions.
 
 ### **📊 Traffic Characteristics**
-- **25 concurrent users** browsing simultaneously
+- **25 concurrent users** browsing simultaneously  
 - **60 unique source IP addresses** (192.168.1.10 through 192.168.1.70)
-- **250+ diverse websites** across multiple categories (social media, e-commerce, news, tech, education, cloud services, etc.)
-- **20 different browser User-Agent strings** (Chrome, Firefox, Safari, mobile devices)
+- **2000+ diverse websites** across multiple categories (social media, e-commerce, news, tech, education, cloud services, etc.)
+- **20 different browser profiles** with realistic headers (User-Agent, screen resolution, DNT settings, etc.)
 - **HTTPS and HTTP traffic** with proper SSL/TLS encryption
+- **Variable search terms** (200+ realistic search queries)
+- **Realistic URL paths** and page variations
+- **Geographic language diversity** (multiple Accept-Language patterns)
 
 ### **🕒 Realistic Browsing Behavior**
-Each simulated user follows a **human-like browsing pattern**:
+Each simulated user follows **advanced human-like browsing patterns** with **conditional probability logic**:
+
+**Session Probabilities:**
+- **80% chance** of visiting category/product pages
+- **60% chance** of using search functionality  
+- **40% chance** of viewing detailed product pages
+- **30% chance** of visiting information pages (about, contact, etc.)
+- **20% chance** of simulating shopping cart actions (add to cart, view cart)
+- **15% chance** of early session abandonment (realistic user dropout)
+
+**Timing Patterns:**
 1. **Homepage visit** (15-35 seconds reading time)
-2. **Category/product browsing** (33-68 seconds with navigation delays)
-3. **Search functionality** (32-65 seconds including typing simulation)
+2. **Category/product browsing** (33-68 seconds with navigation delays + AJAX requests)
+3. **Search functionality** (32-65 seconds including typing simulation with varied search terms)
 4. **Detailed page viewing** (51-117 seconds for thorough reading)
-5. **Information page visit** (18-43 seconds quick scan)
-6. **Session breaks** (2-7 minutes between complete browsing cycles)
+5. **Shopping cart simulation** (15-35 seconds cart review for users who add items)
+6. **Information page visit** (18-43 seconds quick scan)
+7. **Session breaks** (2-7 minutes between complete browsing cycles)
+
+**Mobile vs Desktop Behavior:**
+- **Mobile users:** 30% shorter sessions, max 3 pages, faster interactions
+- **Desktop users:** Full sessions, max 5 pages, longer reading times
+- **Automatic device detection** based on User-Agent strings
 
 ### **🔄 Session Details**
-- **3 complete browsing cycles** per user
-- **5-minute gradual ramp-up** (users start at different times)
+- **3 complete browsing cycles** per user with **intelligent probability logic**
+- **5-minute gradual ramp-up** (users start at different times)  
 - **15-25 minutes total test duration** per user
 - **Staggered timing** prevents simultaneous requests
 - **Cookie and session management** like real browsers
+- **Realistic error handling** with retry logic for failed requests
+- **AJAX simulation** for dynamic content loading
+- **POST requests** for shopping cart and form submissions
+- **Enhanced browser headers** including DNT, Sec-Fetch-*, and Cache-Control
 
 ### **🛡️ Firewall Testing Capabilities**
 This test plan helps evaluate:
@@ -40,10 +63,12 @@ This test plan helps evaluate:
 - **Session persistence** and state management
 
 ### **📈 Expected Traffic Volume**
-- **~375 total HTTP requests** (25 users × 3 cycles × 5 pages)
-- **~1-3 requests per minute** per user (very conservative)
+- **~125-375 total HTTP requests** (varies by user probability paths)
+- **~1-4 requests per minute** per user (very conservative, human-like)
 - **Peak concurrent connections:** 25-50 (depending on page load times)
-- **Data transfer:** Varies by target sites (typically 1-10MB total)
+- **Data transfer:** Varies by target sites (typically 5-50MB total)
+- **Request types:** 85% GET, 15% POST (shopping cart, forms, AJAX)
+- **Early dropouts:** ~15% of users abandon sessions early (realistic behavior)
 
 ### **🔍 What You'll See in Firewall Logs**
 - **Diverse source IPs:** Traffic from 192.168.1.10-70
