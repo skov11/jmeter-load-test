@@ -1,4 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<!-- Product/Article Detail Page (Conditional) -->
+        <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Product Details (40% chance)" enabled="true">
+          <stringProp name="IfController.condition">${__javaScript("${VIEW_PRODUCT}" == "true")}</stringProp>
+        </IfController>
+        <hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="04 - Product Detail" enabled="true">
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <stringProp name="HTTPSampler.domain"></stringProp>
+            <stringProp name="HTTPSampler.port"></stringProp>
+            <stringProp name="HTTPSampler.protocol"></stringProp>
+            <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+            <stringProp name="HTTPSampler.path">/product/123</string<?xml version="1.0" encoding="UTF-8"?>
 <jmeterTestPlan version="1.2" properties="5.0" jmeter="5.4.1">
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Browsing Traffic Generator" enabled="true">
@@ -31,17 +44,45 @@
       <stringProp name="TestPlan.user_define_classpath"></stringProp>
     </TestPlan>
     <hashTree>
-      <!-- CSV Data Set for User Agents -->
-      <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="User Agent Data" enabled="true">
+      <!-- CSV Data Set for User Agents and Browser Profiles -->
+      <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="Browser Profile Data" enabled="true">
         <stringProp name="delimiter">,</stringProp>
         <stringProp name="fileEncoding">UTF-8</stringProp>
-        <stringProp name="filename">user_agents.csv</stringProp>
+        <stringProp name="filename">browser_profiles.csv</stringProp>
+        <boolProp name="ignoreFirstLine">true</boolProp>
+        <boolProp name="quotedData">true</boolProp>
+        <boolProp name="recycle">true</boolProp>
+        <stringProp name="shareMode">shareMode.all</stringProp>
+        <boolProp name="stopThread">false</boolProp>
+        <stringProp name="variableNames">USER_AGENT,ACCEPT_LANGUAGE,SCREEN_RESOLUTION,ACCEPT_ENCODING,DNT</stringProp>
+      </CSVDataSet>
+      <hashTree/>
+      
+      <!-- CSV Data Set for Search Terms -->
+      <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="Search Terms Data" enabled="true">
+        <stringProp name="delimiter">,</stringProp>
+        <stringProp name="fileEncoding">UTF-8</stringProp>
+        <stringProp name="filename">search_terms.csv</stringProp>
         <boolProp name="ignoreFirstLine">true</boolProp>
         <boolProp name="quotedData">false</boolProp>
         <boolProp name="recycle">true</boolProp>
         <stringProp name="shareMode">shareMode.all</stringProp>
         <boolProp name="stopThread">false</boolProp>
-        <stringProp name="variableNames">USER_AGENT,ACCEPT_LANGUAGE</stringProp>
+        <stringProp name="variableNames">SEARCH_TERM</stringProp>
+      </CSVDataSet>
+      <hashTree/>
+      
+      <!-- CSV Data Set for URL Paths -->
+      <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="URL Paths Data" enabled="true">
+        <stringProp name="delimiter">,</stringProp>
+        <stringProp name="fileEncoding">UTF-8</stringProp>
+        <stringProp name="filename">url_paths.csv</stringProp>
+        <boolProp name="ignoreFirstLine">true</boolProp>
+        <boolProp name="quotedData">false</boolProp>
+        <boolProp name="recycle">true</boolProp>
+        <stringProp name="shareMode">shareMode.all</stringProp>
+        <boolProp name="stopThread">false</boolProp>
+        <stringProp name="variableNames">PAGE_TYPE,URL_PATH</stringProp>
       </CSVDataSet>
       <hashTree/>
       
@@ -105,7 +146,7 @@
       </CacheManager>
       <hashTree/>
 
-      <!-- HTTP Header Manager -->
+      <!-- HTTP Header Manager with Enhanced Browser Characteristics -->
       <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
         <collectionProp name="HeaderManager.headers">
           <elementProp name="" elementType="Header">
@@ -114,7 +155,7 @@
           </elementProp>
           <elementProp name="" elementType="Header">
             <stringProp name="Header.name">Accept</stringProp>
-            <stringProp name="Header.value">text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8</stringProp>
+            <stringProp name="Header.value">text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8</stringProp>
           </elementProp>
           <elementProp name="" elementType="Header">
             <stringProp name="Header.name">Accept-Language</stringProp>
@@ -122,7 +163,7 @@
           </elementProp>
           <elementProp name="" elementType="Header">
             <stringProp name="Header.name">Accept-Encoding</stringProp>
-            <stringProp name="Header.value">gzip, deflate</stringProp>
+            <stringProp name="Header.value">${ACCEPT_ENCODING}</stringProp>
           </elementProp>
           <elementProp name="" elementType="Header">
             <stringProp name="Header.name">Connection</stringProp>
@@ -131,6 +172,26 @@
           <elementProp name="" elementType="Header">
             <stringProp name="Header.name">Upgrade-Insecure-Requests</stringProp>
             <stringProp name="Header.value">1</stringProp>
+          </elementProp>
+          <elementProp name="" elementType="Header">
+            <stringProp name="Header.name">DNT</stringProp>
+            <stringProp name="Header.value">${DNT}</stringProp>
+          </elementProp>
+          <elementProp name="" elementType="Header">
+            <stringProp name="Header.name">Sec-Fetch-Dest</stringProp>
+            <stringProp name="Header.value">document</stringProp>
+          </elementProp>
+          <elementProp name="" elementType="Header">
+            <stringProp name="Header.name">Sec-Fetch-Mode</stringProp>
+            <stringProp name="Header.value">navigate</stringProp>
+          </elementProp>
+          <elementProp name="" elementType="Header">
+            <stringProp name="Header.name">Sec-Fetch-Site</stringProp>
+            <stringProp name="Header.value">none</stringProp>
+          </elementProp>
+          <elementProp name="" elementType="Header">
+            <stringProp name="Header.name">Cache-Control</stringProp>
+            <stringProp name="Header.value">max-age=0</stringProp>
           </elementProp>
         </collectionProp>
       </HeaderManager>
@@ -157,6 +218,37 @@
           <stringProp name="ConstantTimer.delay">5000</stringProp>
           <stringProp name="RandomTimer.range">30000</stringProp>
         </UniformRandomTimer>
+        <hashTree/>
+        
+        <!-- Device Type Logic (Mobile vs Desktop behavior) -->
+        <BeanShellPreProcessor guiclass="TestBeanGUI" testclass="BeanShellPreProcessor" testname="Device Type Logic" enabled="true">
+          <stringProp name="BeanShellPreProcessor.query">
+            // Determine if this is a mobile device based on user agent
+            String userAgent = vars.get("USER_AGENT");
+            boolean isMobile = userAgent.contains("Mobile") || userAgent.contains("iPhone") || userAgent.contains("Android");
+            vars.put("IS_MOBILE", String.valueOf(isMobile));
+            
+            // Mobile users have shorter sessions and different timing
+            if (isMobile) {
+                vars.put("SESSION_MULTIPLIER", "0.7");
+                vars.put("MAX_PAGES", "3");
+            } else {
+                vars.put("SESSION_MULTIPLIER", "1.0");
+                vars.put("MAX_PAGES", "5");
+            }
+            
+            // Set random session probabilities
+            vars.put("VISIT_CATEGORY", String.valueOf(Math.random() < 0.8));
+            vars.put("USE_SEARCH", String.valueOf(Math.random() < 0.6));
+            vars.put("VIEW_PRODUCT", String.valueOf(Math.random() < 0.4));
+            vars.put("VISIT_INFO", String.valueOf(Math.random() < 0.3));
+            vars.put("SIMULATE_CART", String.valueOf(Math.random() < 0.2));
+            vars.put("EARLY_EXIT", String.valueOf(Math.random() < 0.15));
+          </stringProp>
+          <stringProp name="BeanShellPreProcessor.filename"></stringProp>
+          <stringProp name="BeanShellPreProcessor.parameters"></stringProp>
+          <boolProp name="BeanShellPreProcessor.resetInterpreter">false</boolProp>
+        </BeanShellPreProcessor>
         <hashTree/>
         
         <!-- Homepage Request -->
@@ -195,167 +287,340 @@
           <hashTree/>
         </hashTree>
 
-        <!-- Navigation Menu/Category -->
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="02 - Category/Products" enabled="true">
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-            <collectionProp name="Arguments.arguments"/>
-          </elementProp>
-          <stringProp name="HTTPSampler.domain"></stringProp>
-          <stringProp name="HTTPSampler.port"></stringProp>
-          <stringProp name="HTTPSampler.protocol"></stringProp>
-          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">/products</stringProp>
-          <stringProp name="HTTPSampler.method">GET</stringProp>
-          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
-          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
-          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
-          <stringProp name="HTTPSampler.response_timeout"></stringProp>
-          <stringProp name="HTTPSampler.ipSource">${SOURCE_IP}</stringProp>
-        </HTTPSamplerProxy>
+        <!-- Navigation Menu/Category (Conditional) -->
+        <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Category Browsing (80% chance)" enabled="true">
+          <stringProp name="IfController.condition">${__javaScript("${VISIT_CATEGORY}" == "true")}</stringProp>
+        </IfController>
         <hashTree>
-          <!-- Add Referer Header -->
-          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Referer Header" enabled="true">
-            <collectionProp name="HeaderManager.headers">
-              <elementProp name="" elementType="Header">
-                <stringProp name="Header.name">Referer</stringProp>
-                <stringProp name="Header.value">${WEBSITE_PROTOCOL}://${WEBSITE_HOST}/</stringProp>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="02 - Category/Products" enabled="true">
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <stringProp name="HTTPSampler.domain"></stringProp>
+            <stringProp name="HTTPSampler.port"></stringProp>
+            <stringProp name="HTTPSampler.protocol"></stringProp>
+            <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+            <stringProp name="HTTPSampler.path">/products</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+            <stringProp name="HTTPSampler.connect_timeout">15000</stringProp>
+            <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+            <stringProp name="HTTPSampler.ipSource">${SOURCE_IP}</stringProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <!-- Realistic Error Simulation -->
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp>200</stringProp>
+                <stringProp>301</stringProp>
+                <stringProp>302</stringProp>
+                <stringProp>304</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.custom_message">Page failed to load - simulating user retry</stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">1</intProp>
+            </ResponseAssertion>
+            <hashTree/>
+            
+            <!-- Add Referer Header -->
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Referer Header" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">Referer</stringProp>
+                  <stringProp name="Header.value">${WEBSITE_PROTOCOL}://${WEBSITE_HOST}/</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            
+            <!-- Social Media Simulation - Multiple AJAX requests -->
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="02a - Load More Content (AJAX)" enabled="true">
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+                <collectionProp name="Arguments.arguments"/>
               </elementProp>
-            </collectionProp>
-          </HeaderManager>
-          <hashTree/>
-          
-          <!-- Random navigation delay -->
-          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Navigation Delay" enabled="true">
-            <stringProp name="ConstantTimer.delay">8000</stringProp>
-            <stringProp name="RandomTimer.range">15000</stringProp>
-          </UniformRandomTimer>
-          <hashTree/>
-          
-          <!-- Browsing/scanning time -->
-          <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Browsing Time" enabled="true">
-            <stringProp name="ConstantTimer.delay">25000</stringProp>
-            <stringProp name="RandomTimer.range">30000</stringProp>
-          </GaussianRandomTimer>
+              <stringProp name="HTTPSampler.domain"></stringProp>
+              <stringProp name="HTTPSampler.port"></stringProp>
+              <stringProp name="HTTPSampler.protocol"></stringProp>
+              <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+              <stringProp name="HTTPSampler.path">/api/load-more</stringProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+              <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+              <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
+              <stringProp name="HTTPSampler.response_timeout">15000</stringProp>
+              <stringProp name="HTTPSampler.ipSource">${SOURCE_IP}</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <!-- AJAX headers -->
+              <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="AJAX Headers" enabled="true">
+                <collectionProp name="HeaderManager.headers">
+                  <elementProp name="" elementType="Header">
+                    <stringProp name="Header.name">X-Requested-With</stringProp>
+                    <stringProp name="Header.value">XMLHttpRequest</stringProp>
+                  </elementProp>
+                  <elementProp name="" elementType="Header">
+                    <stringProp name="Header.name">Accept</stringProp>
+                    <stringProp name="Header.value">application/json, text/javascript, */*; q=0.01</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </HeaderManager>
+              <hashTree/>
+            </hashTree>
+            
+            <!-- Random navigation delay -->
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Navigation Delay" enabled="true">
+              <stringProp name="ConstantTimer.delay">8000</stringProp>
+              <stringProp name="RandomTimer.range">15000</stringProp>
+            </UniformRandomTimer>
+            <hashTree/>
+            
+            <!-- Browsing/scanning time -->
+            <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Browsing Time" enabled="true">
+              <stringProp name="ConstantTimer.delay">25000</stringProp>
+              <stringProp name="RandomTimer.range">30000</stringProp>
+            </GaussianRandomTimer>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+
+        <!-- Search Functionality (Conditional) -->
+        <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Search Usage (60% chance)" enabled="true">
+          <stringProp name="IfController.condition">${__javaScript("${USE_SEARCH}" == "true")}</stringProp>
+        </IfController>
+        <hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="03 - Search" enabled="true">
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="q" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">${SEARCH_TERM}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                  <stringProp name="Argument.name">q</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+            <stringProp name="HTTPSampler.domain"></stringProp>
+            <stringProp name="HTTPSampler.port"></stringProp>
+            <stringProp name="HTTPSampler.protocol"></stringProp>
+            <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+            <stringProp name="HTTPSampler.path">/search</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+            <stringProp name="HTTPSampler.connect_timeout">15000</stringProp>
+            <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+            <stringProp name="HTTPSampler.ipSource">${SOURCE_IP}</stringProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <!-- Search typing simulation delay -->
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Search Typing Time" enabled="true">
+              <stringProp name="ConstantTimer.delay">12000</stringProp>
+              <stringProp name="RandomTimer.range">18000</stringProp>
+            </UniformRandomTimer>
+            <hashTree/>
+            
+            <!-- Results review time -->
+            <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Results Review Time" enabled="true">
+              <stringProp name="ConstantTimer.delay">20000</stringProp>
+              <stringProp name="RandomTimer.range">25000</stringProp>
+            </GaussianRandomTimer>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+
+        <!-- Product/Article Detail Page (Conditional) -->
+        <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Product Details (40% chance)" enabled="true">
+          <stringProp name="IfController.condition">${__javaScript("${VIEW_PRODUCT}" == "true")}</stringProp>
+        </IfController>
+        <hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="04 - Product Detail" enabled="true">
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <stringProp name="HTTPSampler.domain"></stringProp>
+            <stringProp name="HTTPSampler.port"></stringProp>
+            <stringProp name="HTTPSampler.protocol"></stringProp>
+            <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+            <stringProp name="HTTPSampler.path">/product/123</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+            <stringProp name="HTTPSampler.connect_timeout">15000</stringProp>
+            <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+            <stringProp name="HTTPSampler.ipSource">${SOURCE_IP}</stringProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <!-- Page load and initial scan -->
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Page Load Delay" enabled="true">
+              <stringProp name="ConstantTimer.delay">6000</stringProp>
+              <stringProp name="RandomTimer.range">12000</stringProp>
+            </UniformRandomTimer>
+            <hashTree/>
+            
+            <!-- Shopping Cart Simulation (Conditional) -->
+            <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Shopping Cart Actions (20% chance)" enabled="true">
+              <stringProp name="IfController.condition">${__javaScript("${SIMULATE_CART}" == "true")}</stringProp>
+            </IfController>
+            <hashTree>
+              <!-- Add to Cart (POST request) -->
+              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="04a - Add to Cart" enabled="true">
+                <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+                  <collectionProp name="Arguments.arguments">
+                    <elementProp name="product_id" elementType="HTTPArgument">
+                      <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                      <stringProp name="Argument.value">123</stringProp>
+                      <stringProp name="Argument.metadata">=</stringProp>
+                      <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                      <stringProp name="Argument.name">product_id</stringProp>
+                    </elementProp>
+                    <elementProp name="quantity" elementType="HTTPArgument">
+                      <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                      <stringProp name="Argument.value">1</stringProp>
+                      <stringProp name="Argument.metadata">=</stringProp>
+                      <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                      <stringProp name="Argument.name">quantity</stringProp>
+                    </elementProp>
+                  </collectionProp>
+                </elementProp>
+                <stringProp name="HTTPSampler.domain"></stringProp>
+                <stringProp name="HTTPSampler.port"></stringProp>
+                <stringProp name="HTTPSampler.protocol"></stringProp>
+                <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+                <stringProp name="HTTPSampler.path">/cart/add</stringProp>
+                <stringProp name="HTTPSampler.method">POST</stringProp>
+                <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+                <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+                <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+                <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+                <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+                <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
+                <stringProp name="HTTPSampler.response_timeout">20000</stringProp>
+                <stringProp name="HTTPSampler.ipSource">${SOURCE_IP}</stringProp>
+              </HTTPSamplerProxy>
+              <hashTree>
+                <!-- POST request headers -->
+                <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="POST Headers" enabled="true">
+                  <collectionProp name="HeaderManager.headers">
+                    <elementProp name="" elementType="Header">
+                      <stringProp name="Header.name">Content-Type</stringProp>
+                      <stringProp name="Header.value">application/x-www-form-urlencoded</stringProp>
+                    </elementProp>
+                    <elementProp name="" elementType="Header">
+                      <stringProp name="Header.name">X-Requested-With</stringProp>
+                      <stringProp name="Header.value">XMLHttpRequest</stringProp>
+                    </elementProp>
+                  </collectionProp>
+                </HeaderManager>
+                <hashTree/>
+              </hashTree>
+              
+              <!-- View Cart -->
+              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="04b - View Cart" enabled="true">
+                <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+                  <collectionProp name="Arguments.arguments"/>
+                </elementProp>
+                <stringProp name="HTTPSampler.domain"></stringProp>
+                <stringProp name="HTTPSampler.port"></stringProp>
+                <stringProp name="HTTPSampler.protocol"></stringProp>
+                <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+                <stringProp name="HTTPSampler.path">/cart</stringProp>
+                <stringProp name="HTTPSampler.method">GET</stringProp>
+                <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+                <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+                <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+                <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+                <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+                <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
+                <stringProp name="HTTPSampler.response_timeout">20000</stringProp>
+                <stringProp name="HTTPSampler.ipSource">${SOURCE_IP}</stringProp>
+              </HTTPSamplerProxy>
+              <hashTree>
+                <!-- Cart review time -->
+                <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Cart Review Time" enabled="true">
+                  <stringProp name="ConstantTimer.delay">15000</stringProp>
+                  <stringProp name="RandomTimer.range">20000</stringProp>
+                </GaussianRandomTimer>
+                <hashTree/>
+              </hashTree>
+            </hashTree>
+            
+            <!-- Detailed reading/consideration time -->
+            <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Detailed Reading Time" enabled="true">
+              <stringProp name="ConstantTimer.delay">45000</stringProp>
+              <stringProp name="RandomTimer.range">60000</stringProp>
+            </GaussianRandomTimer>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+
+        <!-- Early Exit Logic (15% chance to abandon session) -->
+        <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Early Session Exit (15% chance)" enabled="true">
+          <stringProp name="IfController.condition">${__javaScript("${EARLY_EXIT}" == "true")}</stringProp>
+        </IfController>
+        <hashTree>
+          <!-- Skip remaining requests - user leaves -->
+          <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Abandon Session" enabled="true">
+            <intProp name="ActionProcessor.action">1</intProp>
+            <intProp name="ActionProcessor.target">0</intProp>
+            <stringProp name="ActionProcessor.duration">0</stringProp>
+          </TestAction>
           <hashTree/>
         </hashTree>
 
-        <!-- Search Functionality -->
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="03 - Search" enabled="true">
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-            <collectionProp name="Arguments.arguments">
-              <elementProp name="q" elementType="HTTPArgument">
-                <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">laptop</stringProp>
-                <stringProp name="Argument.metadata">=</stringProp>
-                <boolProp name="HTTPArgument.use_equals">true</boolProp>
-                <stringProp name="Argument.name">q</stringProp>
-              </elementProp>
-            </collectionProp>
-          </elementProp>
-          <stringProp name="HTTPSampler.domain"></stringProp>
-          <stringProp name="HTTPSampler.port"></stringProp>
-          <stringProp name="HTTPSampler.protocol"></stringProp>
-          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">/search</stringProp>
-          <stringProp name="HTTPSampler.method">GET</stringProp>
-          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
-          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
-          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
-          <stringProp name="HTTPSampler.response_timeout"></stringProp>
-          <stringProp name="HTTPSampler.ipSource">${SOURCE_IP}</stringProp>
-        </HTTPSamplerProxy>
+        <!-- About/Contact Page (Conditional) -->
+        <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Info Pages (30% chance)" enabled="true">
+          <stringProp name="IfController.condition">${__javaScript("${VISIT_INFO}" == "true")}</stringProp>
+        </IfController>
         <hashTree>
-          <!-- Search typing simulation delay -->
-          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Search Typing Time" enabled="true">
-            <stringProp name="ConstantTimer.delay">12000</stringProp>
-            <stringProp name="RandomTimer.range">18000</stringProp>
-          </UniformRandomTimer>
-          <hashTree/>
-          
-          <!-- Results review time -->
-          <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Results Review Time" enabled="true">
-            <stringProp name="ConstantTimer.delay">20000</stringProp>
-            <stringProp name="RandomTimer.range">25000</stringProp>
-          </GaussianRandomTimer>
-          <hashTree/>
-        </hashTree>
-
-        <!-- Product/Article Detail Page -->
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="04 - Product Detail" enabled="true">
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-            <collectionProp name="Arguments.arguments"/>
-          </elementProp>
-          <stringProp name="HTTPSampler.domain"></stringProp>
-          <stringProp name="HTTPSampler.port"></stringProp>
-          <stringProp name="HTTPSampler.protocol"></stringProp>
-          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">/product/123</stringProp>
-          <stringProp name="HTTPSampler.method">GET</stringProp>
-          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
-          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
-          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
-          <stringProp name="HTTPSampler.response_timeout"></stringProp>
-          <stringProp name="HTTPSampler.ipSource">${SOURCE_IP}</stringProp>
-        </HTTPSamplerProxy>
-        <hashTree>
-          <!-- Page load and initial scan -->
-          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Page Load Delay" enabled="true">
-            <stringProp name="ConstantTimer.delay">6000</stringProp>
-            <stringProp name="RandomTimer.range">12000</stringProp>
-          </UniformRandomTimer>
-          <hashTree/>
-          
-          <!-- Detailed reading/consideration time -->
-          <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Detailed Reading Time" enabled="true">
-            <stringProp name="ConstantTimer.delay">45000</stringProp>
-            <stringProp name="RandomTimer.range">60000</stringProp>
-          </GaussianRandomTimer>
-          <hashTree/>
-        </hashTree>
-
-        <!-- About/Contact Page -->
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="05 - About Page" enabled="true">
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-            <collectionProp name="Arguments.arguments"/>
-          </elementProp>
-          <stringProp name="HTTPSampler.domain"></stringProp>
-          <stringProp name="HTTPSampler.port"></stringProp>
-          <stringProp name="HTTPSampler.protocol"></stringProp>
-          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">/about</stringProp>
-          <stringProp name="HTTPSampler.method">GET</stringProp>
-          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
-          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
-          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
-          <stringProp name="HTTPSampler.response_timeout"></stringProp>
-          <stringProp name="HTTPSampler.ipSource">${SOURCE_IP}</stringProp>
-        </HTTPSamplerProxy>
-        <hashTree>
-          <!-- Quick scan of about page -->
-          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Quick Scan Time" enabled="true">
-            <stringProp name="ConstantTimer.delay">8000</stringProp>
-            <stringProp name="RandomTimer.range">15000</stringProp>
-          </UniformRandomTimer>
-          <hashTree/>
-          
-          <!-- Session end thinking time -->
-          <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Session End Time" enabled="true">
-            <stringProp name="ConstantTimer.delay">10000</stringProp>
-            <stringProp name="RandomTimer.range">20000</stringProp>
-          </GaussianRandomTimer>
-          <hashTree/>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="05 - About Page" enabled="true">
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <stringProp name="HTTPSampler.domain"></stringProp>
+            <stringProp name="HTTPSampler.port"></stringProp>
+            <stringProp name="HTTPSampler.protocol"></stringProp>
+            <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+            <stringProp name="HTTPSampler.path">/about</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+            <stringProp name="HTTPSampler.connect_timeout">15000</stringProp>
+            <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+            <stringProp name="HTTPSampler.ipSource">${SOURCE_IP}</stringProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <!-- Quick scan of about page -->
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Quick Scan Time" enabled="true">
+              <stringProp name="ConstantTimer.delay">8000</stringProp>
+              <stringProp name="RandomTimer.range">15000</stringProp>
+            </UniformRandomTimer>
+            <hashTree/>
+            
+            <!-- Session end thinking time -->
+            <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Session End Time" enabled="true">
+              <stringProp name="ConstantTimer.delay">10000</stringProp>
+              <stringProp name="RandomTimer.range">20000</stringProp>
+            </GaussianRandomTimer>
+            <hashTree/>
+          </hashTree>
         </hashTree>
         
         <!-- Random break between browsing sessions -->
