@@ -1,570 +1,580 @@
-# JMeter Traffic Generator Setup Guide for Windows & Ubuntu
+# Enhanced JMeter Load Testing Project
 
-## What This Test Plan Accomplishes
+This JMeter test plan creates realistic web browsing traffic from multiple source IPs to test firewall performance, load balancing, and network security systems under authentic conditions.
 
-### **🎯 Primary Purpose**
+## 🚀 Key Features
 
-This JMeter test plan creates **realistic web browsing traffic** from multiple source IPs to test firewall performance, load balancing, and network security systems under authentic conditions.
-
-### **📊 Traffic Characteristics**
-
-- **50 concurrent users** browsing simultaneously
-- **60 unique source IP addresses** (192.168.1.10 through 192.168.1.70)
+- **251 concurrent source IPs** (192.168.1.2-252) for comprehensive multi-source testing
+- **50 concurrent users** browsing simultaneously with realistic behavior patterns
 - **2000+ diverse websites** across multiple categories (social media, e-commerce, news, tech, education, cloud services, etc.)
 - **20+ different browser profiles** with realistic headers (User-Agent, screen resolution, DNT settings, etc.)
 - **HTTPS and HTTP traffic** with proper SSL/TLS encryption
 - **200+ variable search terms** (realistic search queries from everyday items to technical products)
-- **Realistic URL paths** and page variations
-- **Geographic language diversity** (multiple Accept-Language patterns)
-- **Session probability logic** with ThroughputController for realistic user behavior
+- **Enhanced interface management** with intelligent detection and selection
+- **Cross-platform support** (Windows PowerShell and Linux Bash)
 
-### **🕒 Realistic Browsing Behavior**
+## 📊 Traffic Simulation Details
 
-Each simulated user follows **advanced human-like browsing patterns** with **conditional probability logic**:
+### Advanced Human-like Browsing Patterns
+
+Each simulated user follows sophisticated probability-based behavior with conditional logic:
 
 **Session Probabilities:**
 
-- **80% chance** of visiting category/product pages
-- **60% chance** of using search functionality
-- **40% chance** of viewing detailed product pages
-- **30% chance** of visiting information pages (about, contact, etc.)
-- **20% chance** of simulating shopping cart actions (add to cart, view cart)
-- **15% chance** of early session abandonment (realistic user dropout)
+- 80% chance of visiting category/product pages
+- 60% chance of using search functionality
+- 40% chance of viewing detailed product pages
+- 30% chance of visiting information pages (about, contact, etc.)
+- 20% chance of simulating shopping cart actions (add to cart, view cart)
+- 15% chance of early session abandonment (realistic user dropout)
 
-**Timing Patterns:**
+**Realistic Timing Patterns:**
 
-1. **Homepage visit** (15-35 seconds reading time)
-2. **Category/product browsing** (33-68 seconds with navigation delays + AJAX requests)
-3. **Search functionality** (32-65 seconds including typing simulation with varied search terms)
-4. **Detailed page viewing** (51-117 seconds for thorough reading)
-5. **Shopping cart simulation** (15-35 seconds cart review for users who add items)
-6. **Information page visit** (18-43 seconds quick scan)
-7. **Session breaks** (2-7 minutes between complete browsing cycles)
+- Homepage visit: 15-35 seconds reading time
+- Category/product browsing: 33-68 seconds with navigation delays + AJAX requests
+- Search functionality: 32-65 seconds including typing simulation with varied search terms
+- Detailed page viewing: 51-117 seconds for thorough reading
+- Shopping cart simulation: 15-35 seconds cart review for users who add items
+- Information page visit: 18-43 seconds quick scan
+- Session breaks: 2-7 minutes between complete browsing cycles
 
-**Mobile vs Desktop Behavior:**
+**Device-Specific Behavior:**
 
-- **Mobile users:** 30% shorter sessions, max 3 pages, faster interactions
-- **Desktop users:** Full sessions, max 5 pages, longer reading times
+- **Mobile users**: 30% shorter sessions, max 3 pages, faster interactions
+- **Desktop users**: Full sessions, max 5 pages, longer reading times
 - **Automatic device detection** based on User-Agent strings
 
-### **🔄 Session Details**
-
-- **3 complete browsing cycles** per user with **intelligent probability logic**
-- **10-minute gradual ramp-up** (users start at different times)
-- **20-35 minutes total test duration** per user
-- **Staggered timing** prevents simultaneous requests
-- **Cookie and session management** like real browsers
-- **Realistic error handling** with retry logic for failed requests
-- **AJAX simulation** for dynamic content loading
-- **POST requests** for shopping cart and form submissions
-- **Enhanced browser headers** including DNT, Sec-Fetch-\*, and Cache-Control
-
-### **🛡️ Firewall Testing Capabilities**
-
-This test plan helps evaluate:
-
-- **Connection handling** under realistic load
-- **SSL/TLS inspection** performance with encrypted traffic
-- **NAT and connection tracking** with multiple source IPs
-- **DNS resolution** performance with diverse domains
-- **Content filtering** and web security features
-- **Load balancing** effectiveness across multiple users
-- **Geographic traffic patterns** with varied User-Agents
-- **Session persistence** and state management
-
-### **📈 Expected Traffic Volume**
-
-- **~300-750 total HTTP requests** (varies by user probability paths)
-- **~1-4 requests per minute** per user (very conservative, human-like)
-- **Peak concurrent connections:** 50-100 (depending on page load times)
-- **Data transfer:** Varies by target sites (typically 10-100MB total)
-- **Request types:** Mix of GET and POST (Category browsing, Search, AJAX, Shopping cart)
-- **Session probabilities:** 80% category, 60% search, 40% product details, 30% info pages, 20% shopping cart actions
-
-### **🔍 What You'll See in Firewall Logs**
-
-- **Diverse source IPs:** Traffic from 192.168.1.10-70
-- **Realistic domains:** DNS queries for 2000+ major websites
-- **Mixed protocols:** HTTP (port 80) and HTTPS (port 443)
-- **Authentic headers:** Proper User-Agent, Accept, Referer headers with DNT and Accept-Encoding
-- **Natural timing:** Human-like delays between requests (15-117 seconds)
-- **Session behavior:** Cookie exchanges and persistent connections
-- **Varied request types:** GET requests for browsing, POST requests for shopping cart actions
-- **AJAX traffic:** XMLHttpRequest calls for dynamic content loading
-- **Realistic search patterns:** 200+ different search terms across sessions
-
-### **⚠️ Safety Features**
-
-- **Conservative request rates** to avoid detection/blocking
-- **Human-like timing** reduces bot detection risk
-- **Session probability logic** creates realistic user behavior patterns
-- **Configurable targets** (can use test sites instead of real websites)
-- **Easy cleanup** of temporary IP aliases after testing
-- **Gradual load increase** prevents sudden traffic spikes
-- **ThroughputController-based logic** ensures compatibility across JMeter versions
-
-This test plan provides **ultra-realistic, authentic web traffic** with advanced probability-based user behavior simulation, perfect for comprehensive firewall and network security testing. The combination of diverse websites, realistic timing patterns, and sophisticated user journey logic creates traffic that's virtually indistinguishable from real internet users while remaining safe and undetectable by security systems.
-
-## Prerequisites
-
-### Windows Prerequisites
-
-#### 1. Install Java (Required)
-
-1. Download **Java 8 or higher** from [Oracle](https://www.oracle.com/java/technologies/downloads/) or [OpenJDK](https://adoptium.net/)
-2. Run the installer and follow the setup wizard
-3. Verify installation by opening Command Prompt and typing:
-   ```cmd
-   java -version
-   ```
-   You should see Java version information
-
-#### 2. Download JMeter
-
-1. Go to [Apache JMeter Downloads](https://jmeter.apache.org/download_jmeter.cgi)
-2. Download the **Binary** zip file (not source) - usually named `apache-jmeter-5.6.3.zip`
-3. Extract the zip file to a folder like `C:\jmeter\`
-
-#### 3. Configure Source IP Addresses (Required for Multiple Client Simulation)
-
-**IMPORTANT:** To simulate traffic from multiple client IPs, you must first add IP aliases to your network interface.
-
-##### Find Your Network Interface Name:
-
-1. Open Command Prompt and run:
-   ```cmd
-   ipconfig
-   ```
-2. Note the name of your active network connection (e.g., "Ethernet", "Wi-Fi", "Local Area Connection")
-
-##### Add IP Aliases Using PowerShell (Recommended):
-
-1. **Save the PowerShell script** as `add_source_ips.ps1` in your project folder
-2. **Open PowerShell as Administrator** (Right-click PowerShell → "Run as Administrator")
-3. **Navigate to your project folder:**
-   ```powershell
-   cd C:\firewall-test
-   ```
-4. **Run the IP binding script:**
-   ```powershell
-   .\add_source_ips.ps1
-   ```
-5. **Verify IPs were added:**
-   ```cmd
-   ipconfig /all
-   ```
-   You should see IP addresses 192.168.1.10 through 192.168.1.70 listed
-
-##### Alternative: Add IP Aliases Using Batch File:
-
-1. **Edit the batch file** `add_source_ips.bat` and replace `Ethernet` with your actual interface name
-2. **Run Command Prompt as Administrator**
-3. **Execute the batch file:**
-   ```cmd
-   add_source_ips.bat
-   ```
-
-##### Test IP Binding:
-
-Verify JMeter can use the new IPs:
-
-```cmd
-ping -S 192.168.1.10 8.8.8.8
-ping -S 192.168.1.20 8.8.8.8
-```
-
-If these commands work, the IP binding is successful.
-
-### Ubuntu Prerequisites
-
-#### 1. Install Java (Required)
-
-1. **Update package list:**
-   ```bash
-   sudo apt update
-   ```
-2. **Install OpenJDK:**
-   ```bash
-   sudo apt install openjdk-11-jdk
-   ```
-3. **Verify installation:**
-   ```bash
-   java -version
-   ```
-
-#### 2. Download JMeter
-
-1. **Download JMeter:**
-   ```bash
-   cd /opt
-   sudo wget https://downloads.apache.org//jmeter/binaries/apache-jmeter-5.6.3.tgz
-   ```
-2. **Extract JMeter:**
-   ```bash
-   sudo tar -xzf apache-jmeter-5.6.3.tgz
-   sudo mv apache-jmeter-5.6.3 jmeter
-   sudo chown -R $USER:$USER /opt/jmeter
-   ```
-3. **Add to PATH (optional):**
-   ```bash
-   echo 'export PATH=$PATH:/opt/jmeter/bin' >> ~/.bashrc
-   source ~/.bashrc
-   ```
-
-#### 3. Configure Source IP Addresses (Required for Multiple Client Simulation)
-
-##### Find Your Network Interface:
-
-```bash
-ip addr show
-```
-
-Look for your active interface (usually `eth0`, `ens33`, `enp0s3`, etc.)
-
-##### Add IP Aliases Using Script:
-
-1. **Create the IP binding script** and save as `add_source_ips.sh`
-2. **Make it executable:**
-   ```bash
-   chmod +x add_source_ips.sh
-   ```
-3. **Run the script:**
-   ```bash
-   sudo ./add_source_ips.sh
-   ```
-4. **Verify IPs were added:**
-   ```bash
-   ip addr show
-   ```
-   You should see IP addresses 192.168.1.10/24 through 192.168.1.70/24 listed
-
-##### Test IP Binding:
-
-```bash
-ping -I 192.168.1.10 -c 2 8.8.8.8
-ping -I 192.168.1.20 -c 2 8.8.8.8
-```
-
-## Setup Steps
-
-### Step 1: Create Project Directory
-
-1. Create a new folder for your test project:
-   ```
-   C:\firewall-test\
-   ```
-
-### Step 2: Save the Test Files
-
-1. **Save the JMeter Test Plan:**
-
-   - Copy the XML content from the first artifact
-   - Save it as `C:\firewall-test\browsing_test.jmx`
-
-2. **Save the User Agents CSV:**
-
-   - Copy the content from the user agents artifact
-   - Save it as `C:\firewall-test\user_agents.csv`
-
-3. **Save the Source IPs CSV:**
-
-   - Copy the content from the source IPs artifact
-   - Save it as `C:\firewall-test\source_ips.csv`
-
-4. **Save the Websites CSV:**
-
-   - Copy the content from the websites artifact
-   - Save it as `C:\firewall-test\websites.csv`
-
-5. **Save the IP Management Scripts:**
-   - Copy the PowerShell script content and save as `C:\firewall-test\add_source_ips.ps1`
-   - Copy the removal script content and save as `C:\firewall-test\remove_source_ips.ps1`
-   - (Optional) Copy the batch file content and save as `C:\firewall-test\add_source_ips.bat`
-
-Your folder structure should look like:
+## 📁 Project Structure
 
 ```
-C:\firewall-test\
-├── browsing_test.jmx
-├── user_agents.csv
-├── source_ips.csv
-├── websites.csv
-├── add_source_ips.ps1
-├── remove_source_ips.ps1
-└── add_source_ips.bat (optional)
+jmeter-load-test/
+├── browsing_test.jmx           # Main JMeter test plan
+├── source_ips.csv              # 251 source IP addresses (192.168.1.2-252)
+├── user_agents.csv             # 20+ browser profiles with realistic headers
+├── websites.csv                # 2000+ diverse websites across categories
+├── add_source_ips.ps1          # Enhanced Windows IP management (PowerShell)
+├── remove_source_ips.ps1       # Enhanced Windows IP cleanup (PowerShell)
+├── add_source_ips.sh           # Enhanced Linux IP management (Bash)
+├── remove_source_ips.sh        # Enhanced Linux IP cleanup (Bash)
+└── README.md                   # This documentation
 ```
 
-### Step 3: Configure Your Target (Optional - Now Uses Real Websites)
+## 🔧 Prerequisites
 
-**The test now automatically visits real websites from the CSV file, but you can still override this:**
+### Java Installation
 
-1. Open `browsing_test.jmx` in a text editor (Notepad++ recommended)
-2. Find these lines near the top:
-   ```xml
-   <stringProp name="Argument.value">www.example.com</stringProp>
-   <stringProp name="Argument.value">80</stringProp>
-   <stringProp name="Argument.value">http</stringProp>
-   ```
-3. Replace with your firewall's details if you want to test a specific target:
-   - **TARGET_HOST**: Your firewall IP or hostname (e.g., `192.168.1.1`)
-   - **TARGET_PORT**: `80` for HTTP or `443` for HTTPS
-   - **PROTOCOL**: `http` or `https`
+**Windows & Linux:**
 
-**Note:** The test now uses the `websites.csv` file by default, so it will visit real websites like Google, YouTube, Amazon, etc.
-
-### Step 4: Start JMeter GUI
-
-1. Open Command Prompt as Administrator
-2. Navigate to JMeter bin directory:
-   ```cmd
-   cd C:\jmeter\apache-jmeter-X.X\bin
-   ```
-3. Start JMeter GUI:
-   ```cmd
-   jmeter.bat
-   ```
-
-### Step 5: Load the Test Plan
-
-1. In JMeter GUI, click **File → Open**
-2. Navigate to `C:\firewall-test\browsing_test.jmx`
-3. Click **Open**
-
-### Step 6: Verify CSV Files Are Found
-
-1. In the Test Plan tree, click on **"User Agent Data"**
-2. Check that the **Filename** field shows: `user_agents.csv`
-3. Click on **"Source IP Data"**
-4. Check that the **Filename** field shows: `source_ips.csv`
-5. Click on **"Website Data"**
-6. Check that the **Filename** field shows: `websites.csv`
-
-_Note: JMeter looks for CSV files relative to the .jmx file location_
-
-### Step 7: Configure Test Parameters (Optional)
-
-1. Click on **"Browsing Users"** thread group
-2. Adjust settings if needed:
-   - **Number of Threads**: 50 (number of simulated users)
-   - **Ramp-up Period**: 600 seconds (10 minutes to start all users)
-   - **Loop Count**: 3 (how many times each user repeats the browsing flow)
-
-### Step 8: Run the Test
-
-**IMPORTANT:** Make sure you have added the IP aliases (Step 3) before running the test, otherwise JMeter cannot bind to the source IPs.
-
-#### Option A: GUI Mode (for testing/debugging)
-
-1. Click the green **Start** button (triangle icon)
-2. Watch the test progress in real-time
-3. View results in **"Summary Report"**
-4. **Check your firewall logs** - you should now see traffic from multiple source IPs (192.168.1.10-70)
-
-#### Option B: Command Line Mode (for actual load testing)
-
-1. Close JMeter GUI
-2. Open Command Prompt in your test folder:
-   ```cmd
-   cd C:\firewall-test
-   ```
-3. Run the test:
-   ```cmd
-   C:\jmeter\apache-jmeter-X.X\bin\jmeter.bat -n -t browsing_test.jmx -l results.jtl
-   ```
-
-## Post-Test Cleanup
-
-### Windows Cleanup
-
-**Remove IP Aliases (IMPORTANT)** - After completing your firewall testing, remove the temporary IP addresses:
-
-1. **Open PowerShell as Administrator**
-2. **Navigate to your project folder:**
-   ```powershell
-   cd C:\firewall-test
-   ```
-3. **Run the removal script:**
-   ```powershell
-   .\remove_source_ips.ps1
-   ```
-4. **Verify removal:**
-   ```cmd
-   ipconfig /all
-   ```
-   The 192.168.1.10-70 addresses should no longer be listed
-
-### Ubuntu Cleanup
-
-**Remove IP Aliases (IMPORTANT)** - After completing your firewall testing, remove the temporary IP addresses:
-
-1. **Navigate to your project folder:**
-   ```bash
-   cd ~/firewall-test
-   ```
-2. **Run the removal script:**
-   ```bash
-   sudo ./remove_source_ips.sh
-   ```
-3. **Verify removal:**
-   ```bash
-   ip addr show
-   ```
-   The 192.168.1.10/24-70/24 addresses should no longer be listed
-
-## Monitoring Your Test
-
-### During the Test
-
-- **GUI Mode**: Watch the Summary Report for real-time statistics
-- **Command Line**: Monitor the console output for progress
-- **Firewall**: Check your firewall logs for incoming connections
-
-### After the Test
-
-1. **View Results** (if using command line):
-
-   ```cmd
-   C:\jmeter\apache-jmeter-5.6.3\bin\jmeter.bat -g results.jtl -o report
-   ```
-
-   This creates an HTML report in the `report` folder
-
-2. **Key Metrics to Check:**
-   - Response times
-   - Error rates
-   - Throughput (requests/second)
-   - Firewall performance and logs
-
-## Troubleshooting
-
-### Windows Issues
-
-**"Cannot bind to source IP" or "Address already in use":**
-
-- Verify IP aliases were added successfully using `ipconfig /all`
-- Check that the IP range doesn't conflict with existing network devices
-- Try using a different IP range in both the CSV file and the scripts
-
-**"CSV file not found" error:**
-
-- Ensure CSV files are in the same folder as the .jmx file
-- Check file names match exactly (case-sensitive)
-
-**Java not found:**
-
-- Verify Java is installed and in your PATH
-- Try running: `java -version` in Command Prompt
-
-**Permission errors:**
-
-- Run Command Prompt/PowerShell as Administrator
-- Check Windows firewall isn't blocking JMeter
-
-**No traffic showing in firewall logs:**
-
-- Verify IP aliases are properly configured (`ipconfig /all` or `ip addr show`)
-- Check that your default gateway points to the firewall
-- Test binding with: `ping -S 192.168.1.10 8.8.8.8` (Windows) or `ping -I 192.168.1.10 -c 2 8.8.8.8` (Ubuntu)
-- Monitor firewall interfaces during the test
-- Ensure all required CSV files are present and properly formatted
-- Check that websites.csv contains valid domains (2000+ entries)
-
-**High CPU usage:**
-
-- Reduce number of threads for initial testing
-- Use command line mode instead of GUI for actual load testing
-
-### Ubuntu Issues
-
-**"Cannot bind to source IP" or "Cannot assign requested address":**
-
-- Verify IP aliases were added successfully using `ip addr show`
-- Check that the IP range doesn't conflict with existing network devices
-- Ensure you ran the script with sudo: `sudo ./add_source_ips.sh`
-
-**"Permission denied" when running scripts:**
-
-- Make scripts executable: `chmod +x add_source_ips.sh remove_source_ips.sh`
-- Run IP scripts with sudo: `sudo ./add_source_ips.sh`
-
-**Java not found:**
-
-- Install OpenJDK: `sudo apt install openjdk-11-jdk`
+- Download Java 8 or higher from [Oracle](https://www.oracle.com/java/technologies/downloads/) or [OpenJDK](https://adoptium.net/)
 - Verify installation: `java -version`
 
-**JMeter command not found:**
+### JMeter Installation
 
-- Use full path: `/opt/jmeter/bin/jmeter`
-- Or add to PATH: `export PATH=$PATH:/opt/jmeter/bin`
+**Windows:**
 
-**No traffic showing in firewall logs:**
+1. Download [Apache JMeter](https://jmeter.apache.org/download_jmeter.cgi) binary zip
+2. Extract to `C:\jmeter\`
 
-- Verify IP aliases: `ip addr show`
-- Test binding: `ping -I 192.168.1.10 -c 2 8.8.8.8`
-- Check default route: `ip route show default`
-- Monitor network interface: `sudo tcpdump -i eth0 host 192.168.1.10`
+**Linux (Ubuntu/Debian):**
 
-**Display issues (headless systems):**
+```bash
+sudo apt update
+sudo apt install openjdk-11-jdk
+cd /opt
+sudo wget https://downloads.apache.org//jmeter/binaries/apache-jmeter-5.6.3.tgz
+sudo tar -xzf apache-jmeter-5.6.3.tgz
+sudo mv apache-jmeter-5.6.3 jmeter
+sudo chown -R $USER:$USER /opt/jmeter
+```
 
-- Use command line mode only: `jmeter -n -t browsing_test.jmx -l results.jtl`
-- Install X11 forwarding if GUI needed: `sudo apt install xauth`
+## 🌐 Enhanced IP Alias Management
 
-### Common Cross-Platform Issues
+### Windows PowerShell Scripts
 
-**DNS Resolution Issues:**
+#### `add_source_ips.ps1` - Enhanced IP Addition
 
-- Test with: `nslookup www.google.com`
-- Check /etc/resolv.conf (Ubuntu) or DNS settings (Windows)
+**Usage Examples:**
 
-**Network Connectivity:**
+```powershell
+# Auto-detect interface (default behavior)
+.\add_source_ips.ps1
 
-- Verify internet connection
-- Check firewall rules on test machine
-- Test basic connectivity: `ping 8.8.8.8`
+# Interactive interface selection with detailed menu
+.\add_source_ips.ps1 -Interactive
 
-**JMeter Performance:**
+# Specify interface directly
+.\add_source_ips.ps1 -InterfaceName "Wi-Fi"
 
-- Increase JVM heap size: `export JVM_ARGS="-Xms1g -Xmx4g"`
-- Use non-GUI mode for production testing
-- Monitor system resources during test Verify IP aliases are properly configured (`ipconfig /all`)
-- Check that your default gateway points to the firewall
-- Test binding with: `ping -S 192.168.1.10 8.8.8.8`
-- Monitor firewall interfaces during the test
+# List all available interfaces and exit
+.\add_source_ips.ps1 -ListInterfaces
 
-**High CPU usage:**
+# Auto-detect with explicit flag
+.\add_source_ips.ps1 -AutoDetect
+```
+
+**Parameters:**
+
+- `-InterfaceName "Name"` - Specify network interface directly
+- `-Interactive` - Launch interactive interface selection menu
+- `-ListInterfaces` - Display all available interfaces with details and exit
+- `-AutoDetect` - Explicitly use auto-detection (default behavior)
+
+**Features:**
+
+- **Smart Auto-Detection**: Automatically selects best interface with IP address
+- **Interactive Selection**: Browse interfaces with detailed information (IP, status, description)
+- **Interface Validation**: Shows warnings for inactive interfaces
+- **Progress Tracking**: Real-time progress indicators during IP addition
+- **Connectivity Testing**: Optional connectivity verification with sample IPs
+- **Comprehensive Verification**: Multi-level verification of IP configuration
+
+#### `remove_source_ips.ps1` - Enhanced IP Removal
+
+**Usage Examples:**
+
+```powershell
+# Remove from all interfaces (default)
+.\remove_source_ips.ps1
+
+# Remove from specific interface only
+.\remove_source_ips.ps1 -InterfaceName "Ethernet"
+
+# Show detailed removal process
+.\remove_source_ips.ps1 -ShowDetails
+
+# List interfaces with alias counts
+.\remove_source_ips.ps1 -ListInterfaces
+
+# Force removal without prompts
+.\remove_source_ips.ps1 -Force -SkipConfirmation
+```
+
+**Parameters:**
+
+- `-InterfaceName "Name"` - Remove aliases only from specific interface
+- `-ShowDetails` - Display detailed removal process (which IP from which interface)
+- `-ListInterfaces` - Show all interfaces with alias counts and exit
+- `-Force` - Continue removal even if errors occur
+- `-SkipConfirmation` - Skip confirmation prompts
+
+**Features:**
+
+- **Interface-Specific Removal**: Target individual interfaces
+- **Smart Interface Detection**: Automatically finds interfaces with aliases
+- **Detailed Progress**: Shows exactly which IP is removed from which interface
+- **Comprehensive Scanning**: Final verification across all interfaces
+- **Enhanced Error Handling**: Specific troubleshooting guidance
+
+### Linux Bash Scripts
+
+#### `add_source_ips.sh` - Enhanced IP Addition
+
+**Usage Examples:**
+
+```bash
+# Auto-detect interface (default behavior)
+sudo ./add_source_ips.sh
+
+# Interactive interface selection with detailed menu
+sudo ./add_source_ips.sh --interactive
+
+# Specify interface directly
+sudo ./add_source_ips.sh -i eth0
+
+# List all available interfaces and exit
+sudo ./add_source_ips.sh --list-interfaces
+
+# Auto-detect with explicit flag
+sudo ./add_source_ips.sh --auto-detect
+```
+
+**Parameters:**
+
+- `-i, --interface INTERFACE` - Specify network interface directly
+- `--interactive` - Launch interactive interface selection menu
+- `-l, --list-interfaces` - Display all available interfaces with details and exit
+- `-a, --auto-detect` - Explicitly use auto-detection (default behavior)
+- `-h, --help` - Show help and usage examples
+
+**Features:**
+
+- **Color-Coded Output**: Active interfaces in green, inactive in yellow/gray
+- **Driver Information**: Shows network driver for each interface
+- **State Detection**: Displays interface state (UP/DOWN) with color coding
+- **Smart Auto-Detection**: Prioritizes interfaces with default routes and IP addresses
+- **Interactive Menu**: Browse and select from available interfaces
+- **Enhanced Validation**: Warns about inactive interfaces before proceeding
+
+#### `remove_source_ips.sh` - Enhanced IP Removal
+
+**Usage Examples:**
+
+```bash
+# Remove from all interfaces (default)
+sudo ./remove_source_ips.sh
+
+# Remove from specific interface only
+sudo ./remove_source_ips.sh -i eth0
+
+# Show detailed removal process
+sudo ./remove_source_ips.sh --show-details
+
+# List interfaces with alias counts
+sudo ./remove_source_ips.sh --list-interfaces
+
+# Force removal without prompts
+sudo ./remove_source_ips.sh -f -y
+```
+
+**Parameters:**
+
+- `-i, --interface INTERFACE` - Remove aliases only from specific interface
+- `-d, --show-details` - Display detailed removal process
+- `-l, --list-interfaces` - Show all interfaces with alias counts and exit
+- `-f, --force` - Continue removal even if errors occur
+- `-y, --yes` - Skip confirmation prompts
+- `-h, --help` - Show help and usage examples
+
+**Features:**
+
+- **Interface-Specific Operations**: Can target single interface or scan all
+- **Enhanced Progress Tracking**: Shows removal progress with interface names
+- **Comprehensive Final Scan**: Verifies complete removal across all interfaces
+- **Color-Coded Status**: Clear visual feedback for all operations
+- **Detailed Interface Information**: Shows driver, state, and alias counts
+
+## 🚀 Quick Start Guide
+
+### 1. Setup IP Aliases
+
+**Windows (Run PowerShell as Administrator):**
+
+```powershell
+# Interactive setup (recommended for first-time users)
+.\add_source_ips.ps1 -Interactive
+
+# Quick auto-setup
+.\add_source_ips.ps1
+```
+
+**Linux (Run with sudo):**
+
+```bash
+# Interactive setup (recommended for first-time users)
+sudo ./add_source_ips.sh --interactive
+
+# Quick auto-setup
+sudo ./add_source_ips.sh
+```
+
+### 2. Verify IP Configuration
+
+**Windows:**
+
+```powershell
+# List interfaces with alias information
+.\add_source_ips.ps1 -ListInterfaces
+
+# Test connectivity
+ping -S 192.168.1.2 8.8.8.8
+```
+
+**Linux:**
+
+```bash
+# List interfaces with alias information
+sudo ./add_source_ips.sh --list-interfaces
+
+# Test connectivity
+ping -I 192.168.1.2 -c 2 8.8.8.8
+```
+
+### 3. Run JMeter Test
+
+**GUI Mode (for development/testing):**
+
+```bash
+# Windows
+C:\jmeter\apache-jmeter-X.X\bin\jmeter.bat
+
+# Linux
+/opt/jmeter/bin/jmeter
+
+# Then: File → Open → browsing_test.jmx
+```
+
+**Command Line Mode (for production testing):**
+
+```bash
+# Windows
+C:\jmeter\apache-jmeter-X.X\bin\jmeter.bat -n -t browsing_test.jmx -l results.jtl
+
+# Linux
+/opt/jmeter/bin/jmeter -n -t browsing_test.jmx -l results.jtl
+```
+
+### 4. Cleanup (IMPORTANT)
+
+**Windows:**
+
+```powershell
+# Remove all IP aliases
+.\remove_source_ips.ps1
+
+# Remove from specific interface
+.\remove_source_ips.ps1 -InterfaceName "Wi-Fi"
+```
+
+**Linux:**
+
+```bash
+# Remove all IP aliases
+sudo ./remove_source_ips.sh
+
+# Remove from specific interface
+sudo ./remove_source_ips.sh -i eth0
+```
+
+## 📈 Test Configuration
+
+### Default Settings
+
+- **Concurrent Users**: 50 simulated users
+- **Source IPs**: 251 unique addresses (192.168.1.2-252)
+- **Ramp-up Period**: 600 seconds (10 minutes)
+- **Test Duration**: 20-35 minutes per user (3 browsing cycles)
+- **Total Requests**: ~300-750 HTTP requests (varies by user probability paths)
+- **Request Rate**: 1-4 requests per minute per user (conservative, human-like)
+
+### Customizable Parameters
+
+You can modify these in the JMeter test plan:
+
+- Number of threads (users)
+- Ramp-up period
+- Loop count (browsing cycles)
+- Target websites (edit websites.csv)
+- User agents (edit user_agents.csv)
+- Source IP range (edit source_ips.csv)
+
+## 🔍 Monitoring and Results
+
+### Real-time Monitoring
+
+- **GUI Mode**: Watch Summary Report for live statistics
+- **Command Line**: Monitor console output for progress
+- **Firewall Logs**: Check firewall logs for multi-IP traffic
+
+### Results Analysis
+
+```bash
+# Generate HTML report (Windows)
+C:\jmeter\apache-jmeter-X.X\bin\jmeter.bat -g results.jtl -o report
+
+# Generate HTML report (Linux)
+/opt/jmeter/bin/jmeter -g results.jtl -o report
+```
+
+### Key Metrics to Monitor
+
+- Response times across different source IPs
+- Error rates and failure patterns
+- Throughput (requests/second) per IP
+- Firewall performance and connection handling
+- Load balancer distribution patterns
+- Network security system behavior
+
+## 🛠️ Troubleshooting
+
+### Common Issues and Solutions
+
+#### "Cannot bind to source IP"
+
+**Windows:**
+
+```powershell
+# Check IP aliases
+ipconfig /all
+
+# List interfaces with aliases
+.\add_source_ips.ps1 -ListInterfaces
+
+# Try specific interface
+.\add_source_ips.ps1 -InterfaceName "YourInterface"
+```
+
+**Linux:**
+
+```bash
+# Check IP aliases
+ip addr show
+
+# List interfaces with aliases
+sudo ./add_source_ips.sh --list-interfaces
+
+# Try specific interface
+sudo ./add_source_ips.sh -i eth0
+```
+
+#### CSV File Errors
+
+- Ensure all CSV files are in the same directory as the .jmx file
+- Check file names match exactly (case-sensitive)
+- Verify CSV files are properly formatted with headers
+
+#### Permission Errors
+
+- **Windows**: Run PowerShell as Administrator
+- **Linux**: Use sudo for all IP management scripts
+- Check Windows firewall/antivirus blocking JMeter
+
+#### High CPU Usage
 
 - Reduce number of threads for initial testing
-- Use command line mode instead of GUI for actual load testing
+- Use command line mode instead of GUI for production testing
+- Monitor system resources during testing
 
-### Network Configuration
+#### Network Connectivity Issues
 
-If you need to configure network interfaces for the source IPs:
+- Verify internet connection
+- Test basic connectivity: `ping 8.8.8.8`
+- Check DNS resolution: `nslookup www.google.com`
+- Ensure firewall allows outbound connections
 
-1. Open Command Prompt as Administrator
-2. Add IP aliases (example):
-   ```cmd
-   netsh interface ip add address "Local Area Connection" 192.168.1.10 255.255.255.0
-   netsh interface ip add address "Local Area Connection" 192.168.1.11 255.255.255.0
-   ```
+### Advanced Troubleshooting
 
-## Performance Tips
+#### Interface Detection Issues
 
-1. **Use Command Line** for serious load testing (GUI adds overhead)
-2. **Increase Java heap** for high load:
-   ```cmd
-   set HEAP="-Xms1g -Xmx4g"
-   jmeter.bat -n -t browsing_test.jmx -l results.jtl
-   ```
-3. **Monitor system resources** during testing
-4. **Start small** - test with 10 users first, then scale up
+**Windows:**
 
-## Safety Reminders
+```powershell
+# Show detailed interface information
+Get-NetAdapter | Format-Table Name, Status, InterfaceDescription
+Get-NetIPAddress | Where-Object {$_.IPAddress -like "192.168.1.*"}
+```
 
-- Only test against your own firewall or with explicit permission
-- Use isolated test networks when possible
-- **Always remove IP aliases after testing** to avoid network conflicts
-- Monitor system resources to avoid overloading your test machine
-- Have a plan to stop the test quickly if needed
-- **Remember:** The IP aliases (192.168.1.10-70) are temporary and should be removed when testing is complete
+**Linux:**
 
-Your traffic generator is now ready to simulate realistic browsing behavior from 50+ different client IPs!
+```bash
+# Show detailed interface information
+ip link show
+ip addr show
+ethtool -i eth0  # Replace eth0 with your interface
+```
+
+#### Network Performance Issues
+
+- Increase JVM heap size: `export JVM_ARGS="-Xms1g -Xmx4g"`
+- Use fewer concurrent users initially
+- Monitor network bandwidth usage
+- Check for network congestion
+
+## ⚙️ Advanced Configuration
+
+### Custom Target Configuration
+
+Edit `browsing_test.jmx` to change target settings:
+
+```xml
+<stringProp name="Argument.value">your-target-host</stringProp>
+<stringProp name="Argument.value">80</stringProp>
+<stringProp name="Argument.value">http</stringProp>
+```
+
+### Custom IP Ranges
+
+Edit `source_ips.csv` and update scripts with new IP range:
+
+- Modify `START_IP` and `END_IP` variables in scripts
+- Ensure IP range doesn't conflict with existing network devices
+- Update subnet mask if needed
+
+### Performance Tuning
+
+For high-load testing:
+
+```bash
+# Increase system limits (Linux)
+echo "* soft nofile 65536" >> /etc/security/limits.conf
+echo "* hard nofile 65536" >> /etc/security/limits.conf
+
+# Increase JMeter heap
+export JVM_ARGS="-Xms2g -Xmx8g"
+```
+
+## 🔒 Security and Best Practices
+
+### Safety Guidelines
+
+- **Only test your own infrastructure** or with explicit permission
+- **Use isolated test networks** when possible
+- **Monitor system resources** to avoid overloading test machines
+- **Always remove IP aliases** after testing to avoid network conflicts
+- **Start with small tests** (10 users) before scaling up
+
+### Network Considerations
+
+- Ensure adequate bandwidth for generated traffic
+- Monitor firewall and security device performance
+- Plan for cleanup in case of unexpected termination
+- Consider impact on production networks
+
+### Responsible Testing
+
+- Respect rate limits and website terms of service
+- Use test targets or your own infrastructure when possible
+- Monitor and control test intensity
+- Have emergency stop procedures ready
+
+## 📊 What This Test Evaluates
+
+This comprehensive load testing framework helps evaluate:
+
+- **Connection Handling**: How systems manage multiple simultaneous connections
+- **SSL/TLS Performance**: Inspection capabilities with encrypted traffic
+- **NAT and Connection Tracking**: Performance with multiple source IPs
+- **DNS Resolution**: Handling diverse domain queries
+- **Content Filtering**: Web security feature effectiveness
+- **Load Balancing**: Distribution across multiple users and IPs
+- **Geographic Simulation**: Varied User-Agent and language patterns
+- **Session Management**: State persistence and tracking
+- **Network Security**: Behavior under realistic traffic patterns
+- **Scalability**: Performance under graduated load increases
+
+## 🎯 Use Cases
+
+This testing framework is ideal for:
+
+- **Firewall Performance Testing**: Multi-IP traffic simulation
+- **Load Balancer Validation**: Distribution pattern analysis
+- **Network Security Assessment**: Real-world traffic simulation
+- **Capacity Planning**: Determining system limits
+- **Performance Benchmarking**: Baseline establishment
+- **Regression Testing**: Validating system changes
+- **Stress Testing**: Identifying breaking points
+- **Security Testing**: Evaluating protection mechanisms
+
+## 📝 Version History
+
+### Enhanced Version Features
+
+- **251 source IPs** (expanded from 60)
+- **Intelligent interface detection** with auto-selection
+- **Interactive interface selection** menus
+- **Enhanced error handling** and troubleshooting
+- **Cross-platform compatibility** improvements
+- **Detailed progress tracking** and verification
+- **Interface-specific operations** for targeted testing
+- **Comprehensive documentation** and examples
+
+---
+
+**⚠️ Important Reminders:**
+
+1. Always run IP management scripts as Administrator (Windows) or with sudo (Linux)
+2. Remove IP aliases after testing: `.\remove_source_ips.ps1` or `sudo ./remove_source_ips.sh`
+3. The 251 IP aliases are temporary and should be cleaned up
+4. Test responsibly and only against your own infrastructure
+5. Monitor system resources during testing to avoid overload
+
+**🚀 Ready to simulate realistic, multi-source network traffic for comprehensive system testing!**
