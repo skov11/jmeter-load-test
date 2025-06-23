@@ -85,14 +85,6 @@
       </ConfigTestElement>
       <hashTree/>
 
-      <!-- HTTP Cookie Manager -->
-      <CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="HTTP Cookie Manager" enabled="true">
-        <collectionProp name="CookieManager.cookies"/>
-        <boolProp name="CookieManager.clearEachIteration">false</boolProp>
-        <boolProp name="CookieManager.controlledByThreadGroup">false</boolProp>
-      </CookieManager>
-      <hashTree/>
-
       <!-- HTTP Cache Manager -->
       <CacheManager guiclass="CacheManagerGui" testclass="CacheManager" testname="HTTP Cache Manager" enabled="true">
         <boolProp name="clearEachIteration">false</boolProp>
@@ -147,6 +139,14 @@
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
       </ThreadGroup>
       <hashTree>
+        
+        <!-- SINGLE HTTP Cookie Manager - MOVED TO THREAD GROUP LEVEL -->
+        <CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="HTTP Cookie Manager" enabled="true">
+          <collectionProp name="CookieManager.cookies"/>
+          <boolProp name="CookieManager.clearEachIteration">false</boolProp>
+          <boolProp name="CookieManager.controlledByThreadGroup">false</boolProp>
+        </CookieManager>
+        <hashTree/>
         
         <!-- Random startup delay for each user -->
         <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="User Startup Delay" enabled="true">
@@ -530,4 +530,4 @@
       </hashTree>
     </hashTree>
   </hashTree>
-</jmeterTestPlan></boolP
+</jmeterTestPlan>
